@@ -1,0 +1,176 @@
+<?
+  session_start();
+  require_once 'Hanfu_SqlHelper.class.php'; 
+  $user=SqlHelper::getUserByName($_SESSION['userName']);
+?>
+<!doctype html>
+<html>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<body>
+<header class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class='container'>
+	  <div class='navbar-header'>
+	  	<a class='navbar-brand' href='index.php'>锦歌-alpha</a>
+	  </div>
+	  <div class='collapse navbar-collapse'>
+	  	<ul class='nav navbar-nav'>
+	  		<li><a href='jgxy.php'>锦歌撷英</a></li>
+	  		<li><a href='#'>商家专栏</a></li>
+        <?
+        if(!is_null($_SESSION['userName'])){
+
+        ?>
+	  		<li class='dropdown'>
+          <a href="user.php" class="dropdown-toggle" data-toggle="dropdown">我的主页<b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="user.php"><span class='glyphicon glyphicon-user'></span> 基本信息</a></li>
+            <li><a href="setting.php"><span class='glyphicon glyphicon-cog'></span> 设置</a></li>
+            <li><a href="#">thing1</a></li>
+            <li class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li class="divider"></li>
+            <li><a href="logout.php">退出</a></li>
+          </ul>
+        </li>
+        <?
+          }
+        ?>
+	  	</ul>
+	  	<form class="navbar-form navbar-right" role="search">
+		  <div class="form-group">
+		    <input type="text" class="form-control" placeholder="搜索君~">
+		  </div>
+		  <button type="submit" class="btn btn-default">提交</button>
+      <?
+        if($_SESSION['userName']){
+      ?>
+      <a class='btn btn-danger' href='upload.php'>发布</a>
+	   <?
+        }else{
+     ?>
+      <a class='btn btn-danger' href='entryForm.php'>发布</a>
+     <?
+      }
+     ?>
+    </form>
+
+
+	  </div>
+</header>
+<div class="modal fade" id="entry" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">登录</h4>
+      </div>
+      <div class="modal-body">
+        <form role="form" name='entryForm'>
+              <div class="form-group">
+                <label for="exampleInputEmail1">账号：</label>
+                <input type="text" name='userName'class="form-control"  placeholder="用户名/电子邮箱">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">密码：</label>
+                <input type="password" name='password' class="form-control"  placeholder="密码">
+              </div>
+
+              <p><a href='#'>忘记密码？</a></p>
+              <div>
+                <p>使用合作账号登陆</p>
+              </div>
+            </form>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" id='entrySubmit'class="btn btn-primary">登录</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="reg" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="reg">注册</h4>
+      </div>
+      <div class="modal-body">
+        <form role="form" name='regForm'>
+          <div class="form-group">
+                <label for="exampleInputEmail1">用户名：</label>
+                <input type="text" name='userName'class="form-control" id="regUserName" placeholder="用户名(2~18个数字，字母，汉字，字符)">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1">Email：</label>
+                <input type="email" name='email'class="form-control"required='required' id="regUserEmail" placeholder="Enter email">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">密码：</label>
+                <input type="password" name='password'class="form-control" id="regPwd" placeholder="密码">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">密码重复：</label>
+                <input type="password" name='passwordrep'class="form-control" id="regPwd2" placeholder="密码">
+              </div>
+              <hr>
+              <div>
+                <p>使用合作账号登陆</p>
+                <div id='alertDiv'></div>
+              </div>
+            </form>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id='colseReg'data-dismiss="modal">关闭</button>
+        <button type="button" id='registerSubmit'class="btn btn-primary">注册</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="CollectionBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title">添加到篮子</h4>
+      </div>
+      <div class="modal-body">
+        <ul id="collectionListUl">
+          <?
+           $arr=$user->getCollection();
+            for ($i=0; $i <count($arr) ; $i++) { 
+              echo "<li><a class='collectionLink' collectionid=".$arr[$i][0].">".$arr[$i][1]."</a></li>";
+            }
+          ?>
+        </ul>
+        <form name='collectionAddForm'>
+          <input type='text' name='list' placeholder="创建新篮子">
+          <a class='btn btn-info' id='addCollectionList'>创建</a>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary">确定</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class='container main'>
+      <?
+        if(is_null($_SESSION['userName'])){
+        ?>
+    <div class="alert alert-warning alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <strong>您还没有登录</strong>，
+      点此
+      <a href='#'id='entryLink'data-toggle="modal" data-target="#entry" class='alert-link'>登录</a>
+      或
+      <a href='#'id='regLink'data-toggle="modal" data-target="#register"class='alert-link'>注册</a>
+    </div> 
+</div>    
+<?
+  }
+?>  

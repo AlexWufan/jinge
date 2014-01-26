@@ -1,0 +1,49 @@
+.br{
+	border: 1px solid #000;
+}
+.item{
+	height: 500px;
+}
+.vin_lb{
+	margin: 5px 25px;
+}
+.vin_tips{
+	background-color: #eee;
+	margin: 20px;
+	width: 200px;
+	height: 150px;
+	padding: 10px;
+	border-radius: 5px;
+}
+.vin_tips_item{
+	margin: 3px 5px;
+	padding: 3px 5px;
+	display: inline-block;
+	background-color: #F5DEB3;
+	border-radius: 5px;
+	box-shadow: 0px 2px 2px #999;
+
+}
+.vin_main{
+	padding: 20px 10px;
+}
+.vin_jbxx{
+	margin: 10px 0;
+	padding-left: 20px;
+}
+.vin_min_img{
+	margin: 10px 5px;
+	width: 50px;
+	height: 100px;
+}
+.vin_mjx{
+	margin: 0 auto;
+	width: 80%;
+	border:1px solid #000;
+}
+.vin_mjx h5{
+	padding-left: 20px;
+}
+.inline-block{
+	display: inline-block;
+}
