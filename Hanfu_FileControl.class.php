@@ -4,7 +4,7 @@
 		
 		public static function saveHanfuMembersById($id,$members){
 			if(!is_dir(FileControl::$filepath."/hanfu/".$id))
-				mkdir(FileControl::$filepath."/hanfu/".$id);
+				mkdir(FileControl::$filepath."/hanfu/".$id,0777);
 			$handle=fopen(FileControl::$filepath."/hanfu/".$id."/".$id.".mem","w+b");
 			$str=serialize($members);
 			fwrite($handle,$str);
@@ -14,7 +14,7 @@
 		public static function saveUserPic($id,$picname){
 			if(!is_dir(FileControl::$filepath."/user/".$id))
 				mkdir(FileControl::$filepath."/user/".$id);
-			move_uploaded_file($picname, $filepath."/user/$id/$id.jpg");
+			move_uploaded_file($picname,FileControl::$filepath."/user/$id/$id.jpg");
 		}
 
 		
@@ -381,9 +381,9 @@
 				return $now;
 		}
 		public static function countAdmire($arr){
-			for ($i=0; $i <count() ; $i++) { 
+			//for ($i=0; $i <count() ; $i++) {
 				# code...
-			}
+			//}
 		} 
 	}
 ?>
