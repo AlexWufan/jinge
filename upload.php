@@ -20,6 +20,9 @@
       <p>支持：</p>
       <a href='#'>淘宝</a><a href='#'>天猫</a>
     </div>
+  <div>
+      <a class="btn btn-primary" href="swfupload/index.php">自定义上传</a>
+  </div>
 </div>
 <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">

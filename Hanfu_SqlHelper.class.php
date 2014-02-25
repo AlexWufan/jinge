@@ -198,7 +198,7 @@
 			}
 			mysql_select_db($dbname);
 			mysql_query("set names utf8");
-			$res=mysql_query($sql) or die(mysql_error());
+			$res=mysql_query($sql);
 			return $res;
 		}
 		

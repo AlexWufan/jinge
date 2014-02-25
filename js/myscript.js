@@ -141,6 +141,12 @@
 					if(response==0){
 						window.location.reload();
 					}
+                    if(response==1){
+                        window.alert("密码错误！");
+                    }
+                    if(response==2){
+                        window.alert("账户名不存在！");
+                    }
 				}
 			})
 		});
@@ -180,7 +186,7 @@
 							imgs:imgStr,
 							title:title,
 							comment:comment
-						},
+						}
 				})
 				.done(function(response) {
 					location.href="show.php?id="+response;
@@ -225,7 +231,7 @@
 				dataType: 'html',
 				data: {
 					id:id
-				},
+				}
 			})
 			.fail(function() {
 				console.log("error");
