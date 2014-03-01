@@ -8,14 +8,25 @@ ul,li,ol{
 }
 .wrapShowImg,.wrapShowMessage{
 	display: inline-block;
+	
 }
-.wrapShowImg img{
+.wrapShowImg img{	
 	width: 290px;
+}
+.wrapShowMessage{
+	position: absolute;
+	left: 370px;
+	top:2px;
+}
+.wrapShowMessage ul{
+	-webkit-padding-start: 0px;
+	margin:25px 0;
+}
+.nopadding{
+	-webkit-padding-start: 0px;
 }
 .wrapShowMessage h5{
 	font-size: 16px;
-	position: absolute;
-	left: 370px;
 	top:40px;
 }
 .wrapShowMessage h5{

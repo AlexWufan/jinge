@@ -19,6 +19,7 @@ class User{
 	private $fansList;
 	private $fansPath;
 	private $fansNum;
+	private $markedPeopleList;
 
 	public function __construct($userId,$userName,$password,$email,$intime,$describe){
 		$this->userId=$userId;
@@ -37,6 +38,7 @@ class User{
 		$this->fansList=FileControl::readUserFansById($this->userId);
 		$this->attentionPeopleNum=count($this->attentionPeopleList);
 		$this->fansNum=count($this->fansList);
+		
 	}
 	function __destruct(){
 			unset($userId);
@@ -184,12 +186,11 @@ class User{
 			array_push($arr,$now);
 			array_push($arr,$type);
 			array_push($this->admireHanfuList,$arr);
-			FileControl::saveUserAdmireHanfuById($this->userId,$this->admireHanfuList);	
-			//$this->addUserInfo($this->userId,$this->admireHanfuList);		
+			FileControl::saveUserAdmireHanfuById($this->userId,$this->admireHanfuList);			
 		}else{
-			//$list=fileControl::toBeNewArr($this->admireHanfuList);
+			
 			FileControl::deleteAdmire($this->userId,$Hanfu->getHanfuId());
-			//$this->delUserInfo($this->userId,$hanfu->getHanfuId());
+			
 		}
 		$Hanfu->setAdmire($this->userId);
 	}
@@ -265,6 +266,28 @@ class User{
 		$commentArr=SqlHelper::getCommentsByUserId($this->userId);
 		$d=array_merge($commentArr,$this->admireHanfuList);
 		FileControl::saveUserInfo($this->userId,$d);
+	}
+	public function rateHanfu($hanfuid,$data){
+		//data=[5,4,3,2];
+		//存入 userid，时间，data
+		$markedPeopleList=FileControl::getMarkedPeopleList($hanfuid);
+		if(!FileControl::inArray($this->userId,$markedPeopleList)){
+			date_default_timezone_set('Asia/Shanghai');
+			$now=date("Y-m-d H:i:s");
+			$arr=array();
+			$returnArr=array();
+			array_push($arr,$this->userId);//userid
+			array_push($arr,$now);//time
+			array_push($arr,$data);//data
+			array_push($markedPeopleList,$arr);
+			FileControl::savemarkScore($this->userId,$hanfuid,$markedPeopleList);
+			$returnArr["allRate"]=FileControl::caucalateTheSumOfRate($markedPeopleList);
+			$returnArr["ratePeople"]=count($markedPeopleList);
+			return json_encode($returnArr);
+		}else{
+			return -1;
+		}	
+
 	}
 	public function getInfo(){
 		$commentArr=SqlHelper::getCommentsByUserId($this->userId);

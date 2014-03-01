@@ -17,10 +17,11 @@
 			?>
 			<h3>我的主页</h3>
 			<ul class="nav nav-pills">
-			  <li ><a href="user.php">我</a></li>
-			  <li ><a href="fans.php">粉丝</a></li>
+			  <li><a href="user.php">我</a></li>
+			  <li><a href="fans.php">粉丝</a></li>
 			  <li class="active"><a href="attention.php">关注</a></li>
-			  <li><a href='other.php'>关注动态</a><li>
+			  <li><a href='other.php'>别的动态</a><li>
+			  <li><a href="backet.php">篮子</a></li>	
 			</ul>
 			<?
 				}else{

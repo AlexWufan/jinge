@@ -307,6 +307,25 @@
 				
 			}
 		}
+		public static function savemarkScore($userid,$hanfuid,$score){			
+			if(!is_dir(FileControl::$filepath."/hanfu/$hanfuid/"))
+				mkdir(FileControl::$filepath."/hanfu/$hanfuid/");
+			$handle=fopen(FileControl::$filepath."/hanfu/$hanfuid/score.rate","w+b");
+			$str=serialize($score);
+			fwrite($handle,$str);
+			fclose($handle);
+		}
+		public static function getMarkedPeopleList($hanfuid){
+			if(FileControl::isExists(FileControl::$filepath."/hanfu/$hanfuid/score.rate")){
+				$handle=fopen(FileControl::$filepath."/hanfu/$hanfuid/score.rate", "r+");
+				$str=fread($handle,filesize(FileControl::$filepath."/hanfu/$hanfuid/score.rate"));
+				fclose($handle);
+				$Temp=unserialize($str);
+				return $Temp; 
+			}else{
+				return Array();
+			}
+		}
 		public static function readAllFile($url){
 			$files=array();
 			if($handle=opendir($url)){
@@ -385,5 +404,41 @@
 				# code...
 			//}
 		} 
+		public static function caucalateTheSumOfRate($list){
+			 	$items=array();
+			 	$sum1=0;
+				 $sum2=0;
+				 $sum3=0;
+				 $sum4=0;
+				 $count1=0;
+				 $count2=0;
+				 $count3=0;
+				 $count4=0;
+			 if($list){
+				for($i=0;$i<count($list);$i++){
+					if($list[$i][2]['items1']!== 0 ) $count1++;
+					if($list[$i][2]['items2']!== 0 ) $count2++;
+					if($list[$i][2]['items3']!== 0 ) $count3++;
+					if($list[$i][2]['items4']!== 0 ) $count4++;
+					$sum1=$sum1+$list[$i][2]['items1'];
+					$sum2=$sum2+$list[$i][2]['items2'];
+					$sum3=$sum3+$list[$i][2]['items3'];	
+					$sum4=$sum4+$list[$i][2]['items4'];	
+				}	
+				array_push($items,round($sum1/$count1,1));
+				array_push($items,round($sum2/$count2,1));
+				array_push($items,round($sum3/$count3,1));
+				array_push($items,round($sum4/$count4,1));
+				
+				return $items;
+			 }
+			else{
+				array_push($items,0);
+				array_push($items,0);
+				array_push($items,0);
+				array_push($items,0);
+				return $items;
+			}
+		}
 	}
 ?>

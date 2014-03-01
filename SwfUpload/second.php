@@ -1,0 +1,4 @@
+<?
+	$data=$_POST['filedata'];
+	
+?>

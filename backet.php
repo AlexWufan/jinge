@@ -17,7 +17,7 @@
 			?>
 			<h3>我的主页</h3>
 			<ul class="nav nav-pills">
-			  <li ><a href="user.php">我</a></li>
+			 	<li ><a href="user.php">我</a></li>
 			  <li><a href="fans.php">粉丝</a></li>
 			  <li><a href="attention.php">关注</a></li>
 			  <li><a href='other.php'>别的动态</a><li>

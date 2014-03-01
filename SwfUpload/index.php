@@ -12,6 +12,8 @@ $_SESSION["file_info"] = array();
         <title>自定义上传</title>
         <link href="css/swfupload.css" rel="stylesheet" type="text/css"/>
         <link rel='stylesheet' type="text/css" href="../css/bootstrap.css"/>
+        <script type="text/javascript" src='../js/jquery.js'></script>
+        <script type="text/javascript" src='../js/bootstrap.js'></script>
         <script type="text/javascript" src="js/swfupload/swfupload.js"></script>
         <script type="text/javascript" src="js/swfupload/handlers.js"></script>
         <script type="text/javascript" src="js/swfupload/fileprogress.js"></script>
@@ -106,7 +108,7 @@ $_SESSION["file_info"] = array();
          </div>
         </header>
         <div class="container main">
-        <form role="form" class="form-horizontal" action="upload.php" method="get">
+        <form role="form" class="form-horizontal" name='mainForm'>
             <div class="form-group">
                 <label class="col-sm-1 control-label">名称</label>
                 <div class="col-sm-5">
@@ -121,7 +123,7 @@ $_SESSION["file_info"] = array();
             <div class="form-group">
                 <label class="col-sm-1 control-label">形制</label>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control " name="sheme" placeholder="形制">
+                    <input type="text" class="form-control " name="structure" placeholder="形制">
                 </div>
                 <label class="col-sm-1 control-label">其他</label>
                 <div class="col-sm-5">
@@ -135,7 +137,7 @@ $_SESSION["file_info"] = array();
                 </div>
                 <label class="col-sm-1 control-label">元素</label>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control " name="yuansu" placeholder="元素">
+                    <input type="text" class="form-control " name="element" placeholder="元素">
                 </div>
             </div>
             <div class="form-group">
@@ -164,7 +166,21 @@ $_SESSION["file_info"] = array();
                     <input type="radio" id="inlineCheckbox4" value="find"> 寻找
                 </label>
             </div>
+            <button class='btn btn-danger' data-toggle="modal" data-target="#addImg">增加图片</button>
             <div class="hanfuImg">
+                 <div id="thumbnails"></div>
+            </div>
+            <button type="submit" id='submitBtn'class="btn btn-default">确认上传</button>
+        </form>
+        
+        <div class="modal fade" id="addImg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">上传图片</h4>
+              </div>
+              <div class="modal-body">
                 <div id="uploadpanel" class="usual">
                     <div id="content">
                         <?php
@@ -184,19 +200,26 @@ $_SESSION["file_info"] = array();
                                 </div>
                                 <div style="display: inline; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px;">
                                     <span id="spanButtonPlaceholder"></span>&nbsp;
-                                    <input type="button" value="开始上传" class="btn_startupload" onclick="swfu.startUpload();"/>
                                 </div>
                             </form>
-                        <?php
+                           <?php
                         }
                         ?>
-                        <div id="thumbnails"></div>
                     </div>
                 </div>
-            </div>
-            <button type="submit" class="btn btn-default">Submit</button>
-        </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" onclick="swfu.startUpload();">开始上传</button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     </div>
-
+    <script type="text/javascript">
+        var btn = document.getElementById('submitBtn');
+        btn.onclick=function(){
+            mainForm.submit();
+        }
+    </script>
     </body>
 </html>
