@@ -3,5 +3,7 @@
 require_once 'Hanfu_SqlHelper.class.php';
 require_once 'Hanfu_FileControl.class.php';
 require_once 'Hanfu_User.class.php';
-print_r(FileControl::getMarkedPeopleList(24));
+require_once 'Hanfu_Photo.class.php';
+
+print_r(SqlHelper::getSubComment(1394261930));
 ?>

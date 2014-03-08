@@ -1,8 +1,12 @@
 <?php
 session_start();
+require_once '../Hanfu_SqlHelper.class.php';
 if(is_null($_SESSION['userName'])){
     header("Location:../upload.php");
 }
+
+$hanfuId=$_GET['id'];
+$hanfu=SqlHelper::getHanfuById($hanfuId);
 $_SESSION["file_info"] = array();
 ?>
 <!DOCTYPE>
@@ -12,6 +16,7 @@ $_SESSION["file_info"] = array();
         <title>自定义上传</title>
         <link href="css/swfupload.css" rel="stylesheet" type="text/css"/>
         <link rel='stylesheet' type="text/css" href="../css/bootstrap.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/style.css"/>
         <script type="text/javascript" src='../js/jquery.js'></script>
         <script type="text/javascript" src='../js/bootstrap.js'></script>
         <script type="text/javascript" src="js/swfupload/swfupload.js"></script>
@@ -23,7 +28,10 @@ $_SESSION["file_info"] = array();
                 swfu = new SWFUpload({
                     // Backend Settings
                     upload_url: "upload.php",
-                    post_params: {"PHPSESSID": "<?php echo session_id(); ?>"},
+                    post_params: {
+                            "PHPSESSID": "<?php echo session_id(); ?>",
+                            "id":"<?php echo $_GET['id'] ?>"    
+                                    },
 
                     // File Upload Settings
                     file_size_limit : "2 MB",	// 2MB
@@ -108,112 +116,47 @@ $_SESSION["file_info"] = array();
          </div>
         </header>
         <div class="container main">
-        <form role="form" class="form-horizontal" name='mainForm'>
-            <div class="form-group">
-                <label class="col-sm-1 control-label">名称</label>
-                <div class="col-sm-5">
-                    <input type="text" class=" form-control" name="title" placeholder="名称">
-                </div>
-                <label class="col-sm-1 control-label">商家</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control " name="business" placeholder="商家">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class="col-sm-1 control-label">形制</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control " name="structure" placeholder="形制">
-                </div>
-                <label class="col-sm-1 control-label">其他</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control" name="other" placeholder="标题">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-1 control-label">颜色</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control " name="color" placeholder="颜色">
-                </div>
-                <label class="col-sm-1 control-label">元素</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control " name="element" placeholder="元素">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-1 control-label">销售情况</label>
-                <div class="col-sm-5">
-                    <input type="text" class="form-control " name="sell" placeholder="销售情况">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label class=" control-label">推荐理由</label>
-                <textarea name='comment' class="form-control " rows="3" placeholder='推荐理由'></textarea>
-            </div>
-            <div class="checkbox">
-
-                <label class="checkbox-inline">
-                    <input type="radio" id="inlineCheckbox1" value="want"> 想要
-                </label>
-                <label class="checkbox-inline">
-                    <input type="radio" id="inlineCheckbox2" value="have"> 拥有
-                </label>
-                <label class="checkbox-inline">
-                    <input type="radio" id="inlineCheckbox3" value="shar"> 推荐
-                </label>
-                <label class="checkbox-inline">
-                    <input type="radio" id="inlineCheckbox4" value="find"> 寻找
-                </label>
-            </div>
-            <button class='btn btn-danger' data-toggle="modal" data-target="#addImg">增加图片</button>
-            <div class="hanfuImg">
-                 <div id="thumbnails"></div>
-            </div>
-            <button type="submit" id='submitBtn'class="btn btn-default">确认上传</button>
-        </form>
-        
-        <div class="modal fade" id="addImg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">上传图片</h4>
-              </div>
-              <div class="modal-body">
-                <div id="uploadpanel" class="usual">
-                    <div id="content">
-                        <?php
-                        if( !function_exists("imagecopyresampled") ) {
-                            ?>
-                            <div class="message">
-                                <h4><strong>错误:</strong> </h4>
-                                <p>服务器端并没有安装GD库</p>
-                                <p>请在php.ini中把<code>;extension=php_gd2.dll</code>修改为<code>extension=php_gd2.dll</code> and making sure your extension_dir is pointing in the right place. <code>extension_dir = "c:\php\extensions"</code></p>
+            <div class='well well-lg'>
+                    <div class='alert alert-success'>
+                        您【<?echo $hanfu->getType();?>】的汉服【<?echo $hanfu->getHanfuName();?>】上传第一步已经完成，完善下列信息来完成上传。
+                    </div>    
+                <form role="form" class="form-horizontal" name='mainForm'>
+                    <div id="uploadpanel" class="usual">
+                            <div id="content">
+                                <?php
+                                if( !function_exists("imagecopyresampled") ) {
+                                    ?>
+                                    <div class="message">
+                                        <h4><strong>错误:</strong> </h4>
+                                        <p>服务器端并没有安装GD库</p>
+                                        <p>请在php.ini中把<code>;extension=php_gd2.dll</code>修改为<code>extension=php_gd2.dll</code> and making sure your extension_dir is pointing in the right place. <code>extension_dir = "c:\php\extensions"</code></p>
+                                    </div>
+                                <?php
+                                } else {
+                                    ?>
+                                    <form>
+                                        <div class="fieldset flash" id="fsUploadProgress">
+                                            <span class="legend">快速上传</span>
+                                        </div>
+                                        <div class='row'>
+                                        <div class='alert alert-info col-md-offset-1 col-md-4'>
+                                            <span id="spanButtonPlaceholder"></span>
+                                        </div>
+                                        </div>
+                                    </form>
+                                   <?php
+                                }
+                                ?>
                             </div>
-                        <?php
-                        } else {
-                            ?>
-                            <form>
-                                <div class="fieldset flash" id="fsUploadProgress">
-                                    <span class="legend">快速上传</span>
-                                </div>
-                                <div style="display: inline; border: solid 1px #7FAAFF; background-color: #C5D9FF; padding: 2px;">
-                                    <span id="spanButtonPlaceholder"></span>&nbsp;
-                                </div>
-                            </form>
-                           <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal" onclick="swfu.startUpload();">开始上传</button>
-              </div>
-            </div><!-- /.modal-content -->
-          </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
+                        </div>
+                </form>
+        <div class="hanfuImg">
+                 <div id="thumbnails"></div>
+        </div>
+        <button class='btn btn-danger' onclick="swfu.startUpload();">开始上传</button>
+        <a class='btn btn-success' href='../show.php?id=<?echo $hanfuId;?>'>完成创建汉服</a>
+    </div>    
+
     </div>
     <script type="text/javascript">
         var btn = document.getElementById('submitBtn');

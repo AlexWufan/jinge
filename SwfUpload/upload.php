@@ -11,7 +11,7 @@
 
 	session_start();
 	ini_set("html_errors", "0");
-
+	$hanfuId=$_POST['id'];
 	// Check the upload
 	if (!isset($_FILES["Filedata"]) || !is_uploaded_file($_FILES["Filedata"]["tmp_name"]) || $_FILES["Filedata"]["error"] != 0) {
 		echo "ERROR:invalid upload";
@@ -24,13 +24,30 @@
 		echo "ERROR:could not create image handle ". $_FILES["Filedata"]["tmp_name"];
 		exit(0);
 	}
-
+	function create_folders($dir){ 
+				return is_dir($dir) or (create_folders(dirname($dir)) and mkdir($dir, 0777)); 
+			}
 	$width = imageSX($img);
 	$height = imageSY($img);
 
 	if (!$width || !$height) {
 		echo "ERROR:Invalid width or height";
 		exit(0);
+	}
+	date_default_timezone_set('Asia/Shanghai');
+	$now=date("U");
+	if(isset($_FILES['Filedata'])||!is_uploaded_file($_FILES['Filedata']['tmp_name'])||$_FILES['Filedata']['error']!=0){
+		$upload_file=$_FILES['Filedata'];
+		$file_info=pathinfo($upload_file['name']);
+		$file_type=$file_info['extension'];
+		
+		if(!is_dir("../hanfu/".$hanfuId.'/img'))
+			create_folders("../hanfu/".$hanfuId.'/img');			
+		$save='../hanfu/'.$hanfuId.'/img/'.$now.".".$file_type;
+		$name=$upload_file['tmp_name'];
+	}
+	if(!move_uploaded_file($name, $save)){
+		exit;
 	}
 
 	// Build the thumbnail
@@ -75,11 +92,8 @@
 	imagejpeg($new_img);
 	$imagevariable = ob_get_contents();
 	ob_end_clean();
-
-	$file_id = md5($_FILES["Filedata"]["tmp_name"] + rand()*100000);
-	
+	$file_id =$now;
 	$_SESSION["file_info"][$file_id] = $imagevariable;
-
 	echo "FILEID:" . $file_id;	// Return the file id to the script
 	
 ?>

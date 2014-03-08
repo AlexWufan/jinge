@@ -1,6 +1,79 @@
 ul,li,ol{
 	list-style: none;
 }
+.item_one{
+	margin: 0px auto;
+	clear: both;
+	padding: 10px ;
+}
+.item_one .left-item{
+	font-size: 12px;
+	width: 86px;
+	display: inline-block;
+	margin: 5px 15px;
+	float: left;
+}
+.item_one .left-item .author-of-item{
+	margin-left: 31px;
+}
+.item_one .left-item .author-of-item img{
+	border-radius: 25px;
+	width: 50px;
+	height: 50px;
+	border: 3px solid #e3e3e3;
+}
+.item_one .left-item .author-of-item .author-name{
+	margin-right:5px;
+}
+.item_one .formAction{
+	margin: 5px;
+}
+.container-of-index{
+	position: relative;
+}
+.item_one .item-img{
+	background-color: ivory;
+	float: left;
+}
+.item_one .item-img .item-wrapImg{
+	border: 1px solid #e3e3e3;
+}
+.item_one .author-img img{
+	border-radius: 25px;
+	width: 50px;
+	height: 50px;
+	border: 3px solid #e3e3e3;
+}
+.item_one .item-img img{
+
+}
+.item_one .item-img  .comment img{
+	width: 30px;
+	height: 30px;
+}
+.item_one .author-information .comment{
+	padding: 1px 0px;
+}
+.item_one .informationOfImg{
+	padding-left: 10px;
+	padding-bottom: 10px;
+	background-color: #fff;
+}
+.item_one .underImg{
+	padding:  15px 10px;
+	background-color: #eee;
+}
+.item_one .item-img .item-like{
+	padding:10px;
+	border-right:1px solid #ccc; 	 
+}
+.item_one .item-img .item-likeNum{
+	padding: 0 20px; 
+}
+.item_one .informationOfImg .information-reason{
+	padding :20px 0;
+	border-bottom: 1px solid #e3e3e3;
+}
 .vin,.wrapShowImg{
 	overflow: hidden;
 	width: 290px;
@@ -190,6 +263,9 @@ ul,li,ol{
 .heightAll{
 	height:200px;
 }
+.indexMain{
+	margin-top: -20px;
+}
 .main{
 	margin-top: 20px;
 }
@@ -214,7 +290,8 @@ body { padding-top: 50px; }
 
 }
 .information p{
-	margin: 15px 40px;
+	padding: 10px 20px;
+	height: 70px;
 	font-size: 14px;
 }
 .container{

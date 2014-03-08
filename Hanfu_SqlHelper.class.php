@@ -2,6 +2,7 @@
 	require_once 'Hanfu_User.class.php';
 	require_once "Hanfu_Hanfu.class.php";	
 	require_once 'Hanfu_Comment.class.php';
+    require_once 'Hanfu_Photo.class.php';
 	class SqlHelper{
 		public static function getCollectionById($userid,$id){
 			$sql="SELECT * from collectionlist where owner='$userid' and id='$id'";
@@ -28,17 +29,38 @@
 			"','$email','$intime')";
 			SqlHelper::execute_sql($sql);
 		} 
-		public static function insertHanfu($userid,$name,$main_pic,$comment,$type,$imgs,$taobaoid,$link){
+		public static function insertHanfu($userid,$data){
 			date_default_timezone_set('Asia/Shanghai');
 			$addtime=date("Y-m-d H:i:s");
-			$sql="insert into hanfu(userid,name,addtime,admirenum,main_pic,type,imgs,taobaoid,link,comment)
-				  values('$userid','$name','$addtime',0,'$main_pic','$type','$imgs','$taobaoid','$link','$comment')";
+			if(!is_null($data['taobaoid'])){
+						$sql="insert into hanfu(userid,name,addtime,admirenum,main_pic,type,imgs,taobaoid,link,comment) values ('$userid','".$data["title"]."','$addtime',0,'".$data["main_pic"]."','".$data["type"]."','".$data["imgs"]."','".$data["taobaoid"]."','".$data["link"]."','".$data["comment"]."')";			
+			}else{				
+				$sql="insert into hanfu(userid,name,addtime,admirenum,type,business,structure,other,color,element,sell,comment)
+				values('$userid','".$data['name']."','$addtime',0,'".$data["type"]."','".$data["business"]."','".$data["structure"]."','".$data["other"]."','".$data["color"]."','".$data["element"]."','".$data["sell"]."','".$data["comment"]."')";
+			}
 			SqlHelper::execute_sql($sql);
-			return true;	  
+			return SqlHelper::getTheLastInsert($addtime,$userid);
 		}
 		public static function deleteHanfu($id){
 			$sql="DELETE from hanfu where id='$id'";
 			SqlHelper::execute_sql($sql);
+		}
+		public static function deleteUser($id){
+			$sql="DELETE from user where id='$id'";
+			SqlHelper::execute_sql($sql);
+		}
+		public static function deleteComment($id){
+			$sql="DELETE from comment where id='$id'";
+			SqlHelper::execute_sql($sql);
+		}
+		public static function deleteOneDay($id){
+			$sql="DELETE from oneDay where id='$id'";
+			SqlHelper::execute_sql($sql);
+		}
+		public static function addNewIndexItem($now,$reason,$author){
+			$sql="insert into oneDay(timer,reason,author) values ('$now','$reason','$author')";
+			SqlHelper::execute_sql($sql) or die("error");
+			return true;
 		}
 		public static function updateHanfu($key,$value,$id){
 			$sql="UPDATE hanfu set $key='$value' where id ='$id'";
@@ -53,6 +75,22 @@
 			}
 			SqlHelper::free_result($res);
 			return $arr;
+		}
+		public static function subOneDay($index,$nums){
+			$sql="SELECT * from oneDay order by timer desc limit $index,$nums";
+			$res=SqlHelper::execute_sql($sql);
+			$arr=array();
+			while($row=mysql_fetch_assoc($res)){
+				array_push($arr,$row['id']);
+			}
+			SqlHelper::free_result($res);
+			return $arr;	
+		}
+		public static function getOneDayById($id){
+			$sql="SELECT * from oneDay where id='$id'";
+			$res=SqlHelper::execute_sql($sql);
+			$row=mysql_fetch_assoc($res);
+			return new Photo($row);
 		}
 		public static function updatePassword($userid,$password){
 			$sql="UPDATE user set password=".md5($password)."where id='$userid'";
@@ -87,6 +125,27 @@
 			SqlHelper::free_result($res);
 			return $comment;
 		}
+
+		public static function getComment(){
+			$sql="SELECT * from comment";
+			$res=SqlHelper::execute_sql($sql);
+			$return=array();
+			while($row=mysql_fetch_assoc($res)){
+				array_push($return,$row['id']);
+			}
+			SqlHelper::free_result($res);
+			return $return;
+		}
+		public static function getCommentsByToid($toid){
+			$sql="select * from comment where toid='$toid'";
+			$res=SqlHelper::execute_sql($sql);
+			$return=array();
+			while ($row=mysql_fetch_assoc($res)) {
+				array_push($return, $row['id']);
+			}
+			SqlHelper::free_result($res);
+			return $return ;
+		}
 		public static function getCommentsByUserId($userid){
 			$sql="SELECT * FROM comment where userid='$userid'";
 			$res=SqlHelper::execute_sql($sql);
@@ -100,6 +159,17 @@
 			}
 			SqlHelper::free_result($res);
 			return $return;
+		}
+		public static function getSubComment($oneDayId){
+			$sql="SELECT * from comment where toid='$oneDayId' limit 3,5 ";
+			$res=SqlHelper::execute_sql($sql);
+			$return=array();
+			while($row=mysql_fetch_assoc($res)){
+				array_push($return,$row['id']);
+			}
+			SqlHelper::free_result($res);
+			return $return;
+
 		}
 		public static function addCollectionList($userid,$title){
 			$sql="insert into collectionlist (title,owner) values ('$title','$userid')";
@@ -127,6 +197,7 @@
 			SqlHelper::free_result($res);
 			return $user;
 		}
+
 		public static function getUserByName($name){
 			$sql="select * from user where name='$name'";
 			$res=SqlHelper::execute_sql($sql);
@@ -147,7 +218,7 @@
 			$sql="select * from hanfu where taobaoid='$id'";
 			$res=SqlHelper::execute_sql($sql);
 			$row=mysql_fetch_assoc($res);
-			$hanfu=new Hanfu($row['id'],$row['userid'],$row['name'],$row['main_pic'],$row['type'],$row['imgs'],$row['link'],$row['comment']);
+			$hanfu=new Hanfu($row);
 			SqlHelper::free_result($res);
 			return $hanfu;
 		}
@@ -160,11 +231,18 @@
 			}
 			return $return;
 		}
+		public static function getTheLastInsert($addtime,$userid){
+			$sql="SELECT id from hanfu where addtime='$addtime' and userid='$userid'";
+			$res=SqlHelper::execute_sql($sql);
+			$row=mysql_fetch_array($res);
+			SqlHelper::free_result($res);
+			return $row[0];
+		}
 		public static function getHanfuById($id){
 			$sql="select * from hanfu where id='$id'";
 			$res=SqlHelper::execute_sql($sql);
 			$row=mysql_fetch_assoc($res);
-			$hanfu=new Hanfu($row['id'],$row['userid'],$row['name'],$row['main_pic'],$row['type'],$row['imgs'],$row['link'],$row['comment']);
+			$hanfu=new Hanfu($row);
 			SqlHelper::free_result($res);
 			return $hanfu;
 		}
@@ -179,8 +257,8 @@
 			$sql="SELECT id from user where name='$name'";
 			$res=SqlHelper::execute_sql($sql);
 			$row=mysql_fetch_array($res);
-			return $row[0];
 			SqlHelper::free_result($res);
+			return $row[0];
 		}
 		public static function updateDescribe($userid,$describe){
 			$sql="UPDATE user set description='$describe' where id='$userid' ";

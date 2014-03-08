@@ -55,12 +55,12 @@
             <div class='wrapShowMessage pull-right'>
               <h5><a href="<?echo $hanfu->getLink();?>"><?echo $hanfu->getHanfuName();?></a></h5>
               <ul>
-                <li>商家</li>
-                <li>形制</li>
-                <li>其他</li>
-                <li>颜色</li>
-                <li>元素</li>
-                <li>销售情况</li>
+                <li>商家:<?echo $hanfu->getBusiness();?></li>
+                <li>形制:<?echo $hanfu->getStructure();?></li>
+                <li>其他:<?echo $hanfu->getOther();?></li>
+                <li>颜色:<?echo $hanfu->getColor();?></li>
+                <li>元素:<?echo $hanfu->getElement();?></li>
+                <li>销售情况:<?echo $hanfu->getSell();?></li>
               </ul>
               <div class='rank'>
                 <?

@@ -209,9 +209,8 @@ class User{
 		SqlHelper::insertComment($this->userId,$toid,$hanfuid,$content,$type,$commentdate);
 	}
 	
-	public function uploadHanfu($name,$main_pic,$comment,$type,$imgs,$taobaoid,$link){
-		SqlHelper::InsertHanfu($this->userId,$name,$main_pic,$comment,$type,$imgs,$taobaoid,$link);
-		return true;
+	public function uploadHanfu($data){
+		return	SqlHelper::InsertHanfu($this->userId,$data);
 	}
 	
 	public function addAttentionPeople($user){

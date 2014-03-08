@@ -124,7 +124,7 @@ SWFUpload.prototype.initSettings = function () {
 	};
 	
 	// Upload backend settings
-	this.ensureDefault("upload_url", "");
+	this.ensureDefault("upload_url", "../../upload.php");
 	this.ensureDefault("preserve_relative_urls", false);
 	this.ensureDefault("file_post_name", "Filedata");
 	this.ensureDefault("post_params", {});

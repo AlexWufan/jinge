@@ -4,6 +4,7 @@
 
 	$index=$_GET['index'];
 	$num=10;
+	$len=18;
 	$returnArr=array();
 	$hanfuArr=SqlHelper::subPageHanfu($index,$num);
 	for($i=0;$i<count($hanfuArr);$i++){
@@ -13,7 +14,8 @@
 		$arr['hanfuName']=$hanfu->getHanfuName();
 		$arr['hanfuMainPic']=$hanfu->getMain_pic();
 		$arr['hanfuOwner']=$owner->getUserName();
-		$arr['hanfuComment']=$hanfu->getComment();
+		$commentStr=$hanfu->getComment();
+		$arr['hanfuComment']=strlen($commentStr)<=$len ? $commentStr : (mb_substr($commentStr,0,$len,'UTF-8').chr(0)."...");  
 		$arr['hanfuCommentNum']=$hanfu->getCommentNum();
 		$arr['hanfuLikeNum']=$hanfu->getAdmireNum();
 		$arr['hanfuType']=$hanfu->getType();
