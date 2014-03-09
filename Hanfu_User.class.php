@@ -176,20 +176,26 @@ class User{
 		sqlHelper::delCollectionList($this->userId,$name);
 		FileControl::delCollectionList($userid,$collect);
 	}
-	public function admireHanfu($Hanfu){
-		if(!FileControl::inArray($Hanfu->getHanfuId(),$this->fansList)){
+	public function admireHanfu($Hanfu,$option=""){
+		
+		if(!is_null($option)){
+			$id=$Hanfu->getTimeStamp();
+		}else{
+			$id=$Hanfu->getHanfuId();
+		}
+		if(!FileControl::inArray($id,$this->admireHanfuList)){
 			date_default_timezone_set('Asia/Shanghai');
 			$now=date("Y-m-d H:i:s");
 			$type="admire";
 			$arr=array();
-			array_push($arr,$Hanfu->getHanfuId());
+			array_push($arr,$id);
 			array_push($arr,$now);
 			array_push($arr,$type);
 			array_push($this->admireHanfuList,$arr);
 			FileControl::saveUserAdmireHanfuById($this->userId,$this->admireHanfuList);			
 		}else{
 			
-			FileControl::deleteAdmire($this->userId,$Hanfu->getHanfuId());
+			FileControl::deleteAdmire($this->userId,$id);
 			
 		}
 		$Hanfu->setAdmire($this->userId);
@@ -202,7 +208,9 @@ class User{
 			return false;
 		
 	}
-	
+	public function addArticle($title,$content,$now){
+		SqlHelper::addArticle($this->userId,$title,$content,$now);
+	}
 	public function setComment($toid,$content,$type,$hanfuid){
 		date_default_timezone_set('Asia/Shanghai');
 		$commentdate=date("Y-m-d H:i:s");

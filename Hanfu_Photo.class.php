@@ -10,6 +10,8 @@ class Photo{
 			$this->time=$row['timer'];
 			$this->id=$row['id'];
 			$this->commentList=SqlHelper::getCommentsByToId($this->time);
+			$this->admiresList=FileControl::readHanfuAdmiresById($this->time);
+			$this->admireNum=count($this->admiresList);
 		}
 		public function __destruct(){
 			unset($row);
@@ -34,6 +36,27 @@ class Photo{
 		}
 		public function getCommentList(){
 			return $this->commentList;
+		}
+		public function setAdmire($userId){
+			if(!FileControl::inArray($userId,$this->admiresList)){
+				$arr=array();
+				date_default_timezone_set('Asia/Shanghai');
+				$now=date("Y-m-d H:i:s");
+				array_push($arr,$userId);
+				array_push($arr,$now);
+				array_push($this->admiresList,$arr);
+				$this->admireNum++;
+				FileControl::saveHanfuAdmiresById($this->HanfuId,$this->admires);
+			}else{
+				$this->admireNum--;	
+			}
+				SqlHelper::updateOneDay('admireNum',$this->admireNum,$this->HanfuId);
+		}
+		public function getAdmireList(){
+			return $this->admiresList;
+		}
+		public function getAdmireNum(){
+			return $this->admireNum;
 		}
 	}
 ?>

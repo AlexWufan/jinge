@@ -6,9 +6,10 @@
   $index=0;
   $num=9;
   $oneDayIdArr=SqlHelper::subOneDay($index,$num);
+  $oneDayNum=SqlHelper::getOneDayNum();
 ?>
   <div class='container indexMain'>	
-	<div id='waterfall' class='container-of-index' data-hanfunum="<?echo $hanfuNum;?>">
+	<div id='waterfall' class='container-of-index' data-oneDayNum="<?echo $oneDayNum;?>">
     <?
       for($i=0;$i<count($oneDayIdArr);$i++){
         $oneDay=SqlHelper::getOneDayById($oneDayIdArr[$i]);
@@ -27,11 +28,10 @@
           <div class='item-wrapImg'>
              <img class='item-of-img'src="<?echo $oneDay->getImage();?>"/>
              <div class='underImg'>
-                  <a href='#' class='item-like'><span class='glyphicon glyphicon-heart'></span> </a>
-                  <span class='item-likeNum'>有1000人喜欢过这附图</span>
+                  <a timeStamp=<?echo $oneDay->getTimeStamp();?> class='item-like'><span class='glyphicon glyphicon-heart'></span> </a>
+                  <span class='item-likeNum'>有<?echo $oneDay->getAdmireNum();?>人喜欢过这附图</span>
                   <span class='pull-right'>
-                    <a href='#' class='item-like'><span class='glyphicon glyphicon-heart'></span> </a>
-                    <a href='#' class='item-like'><span class='glyphicon glyphicon-heart'></span> </a>
+                    <a class='item-like'><span class='glyphicon glyphicon-share'></span> </a>
                   </span>
                   
               </div>
@@ -99,8 +99,9 @@
     imgs.each(function(){
       var w=this.width;
       var h=this.height;      
+       console.log(w+""+h);
        if(w>h){
-          this.width=770;
+          this.width=600;
         }
         else{
           this.height=600;
@@ -109,6 +110,9 @@
     $('.updateOfComment').click(function(){
       var self=$(this);
       var comment=self.parents(".formAction").find('input')[0];
+      if(comment.value.length==0){
+        return false;
+      }
       $.ajax({
         url: 'addComment.php',
         type: 'get',
@@ -143,19 +147,57 @@
                   self.parents(".author-information").find('.commentList').append(commentToShow);
                 }
               }
-            });
-            
+            });        
     });
+      
+         $(".item-like").mouseenter(function(event) {
+           /* Act on the event */
+           var self=$(this);
+            var heart=$(this).children('.glyphicon-heart');
+            $(this).children('.addadmire').removeClass('visibility-hide');
+            if(heart.hasClass('color-red')){
+              heart.removeClass('color-red').addClass('color-grey');
+            }else{
+              heart.addClass('color-red');
+            }
+           $(this).mouseleave(function(event) {
+            /* Act on the event */
+              self.children('.glyphicon-heart').removeClass('color-red');
+            if(heart.hasClass('color-grey')){
+                heart.removeClass('color-grey').addClass('color-red');
+              }
+            });
+         });
+
+         $(".item-like").click(function(){
+            var like =$(this),
+                  id = $(this).attr('TimeStamp');
+            var heart=$(this).children('.glyphicon-heart');
+            $.ajax({
+                url:'addAdmire.php',
+                type:'get',
+                dataType:'html',
+                data:{
+                    id:id,
+                    type:'oneDay'
+                },
+                success:function(response){
+                  console.log(response);
+                  //like.parents('.underImg').find('item-likeNum').html("有"+response+"人喜欢过这附图")；
+                  if(heart.hasClass('color-red')){
+                    heart.removeClass('color-red').addClass('color-black');
+                  }else{
+                    heart.removeClass('color-black').addClass('color-red');
+                  }
+                }
+            })     
+
+         }); 
+         
+
 
   });
 </script>
-<!--
-<script type="text/javascript" src="js/jquery.masonry.min.js"></script>
-<script type="text/javascript" src="js/jquery.infinitescroll.js"></script>
 <script type="text/javascript" src='js/imageloaded.js'></script>
-<script type="text/javascript">
-
-addAdmire();
-</script>
-<script type="text/javascript" src='js/mywater.js'></script>
---></html>
+<script type="text/javascript" src='js/indexwater.js'></script>
+</html>

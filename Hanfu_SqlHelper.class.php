@@ -92,6 +92,16 @@
 			$row=mysql_fetch_assoc($res);
 			return new Photo($row);
 		}
+		public static function getOneDayNum(){
+			$sql="SELECT count(*) as num from oneDay";
+			$res=SqlHelper::execute_sql($sql);
+			$row=mysql_fetch_assoc($res);
+			return $row["num"];
+		}
+		public static function updateOneDay($key,$value,$id){
+			$sql="UPDATE oneday $key='$value' where id ='$id'";
+			SqlHelper::execute_sql($sql);
+		}
 		public static function updatePassword($userid,$password){
 			$sql="UPDATE user set password=".md5($password)."where id='$userid'";
 			SqlHelper::execute_sql($sql);
@@ -213,6 +223,19 @@
 			$user=new User($row['id'],$row['name'],$row['password'],$row['email'],$row['intime'],$row['description']);
 			SqlHelper::free_result($res);
 			return $user;
+		}
+		public static function addArticle($userid,$title,$content,$now){
+			$sql="insert into article (title,content,userid,addTime) values ('$title','$content','$userid','$now')";
+			SqlHelper::execute_sql($sql);
+		}
+		public static function getArticle($index,$num){
+			$sql="SELECT * from article limit $index,$num";
+			SqlHelper::execute_sql($sql);
+			$return=array();
+			while($row=mysql_fetch_assoc($res)){
+				array_push($return, $row);
+			}
+			return $return;
 		}
 		public static function getHanfuByTaobaoId($id){
 			$sql="select * from hanfu where taobaoid='$id'";

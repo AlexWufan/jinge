@@ -15,9 +15,6 @@ $(function(){
 			});
 		}
 	function loadNewItems(callback){
-		//alert('in');
-		//alert(x);
-		//alert('in')
 		$.ajax({
 			url:"getNewItem.php",
 			method:"get",
@@ -26,14 +23,10 @@ $(function(){
 			},
 			dataType:'json',
 			success:function(items){
-				//alert(items[0].hanfuLink);
-				//console.log(items.length);
-
 				var feedback=$("<div id='#feedback'></div>");
 				for (var i = 0; i < items.length ; i++) {
 						var item=items[i];
 						console.log(item);
-						//item.hanfuMainPic='0';
 					indexitem=$('<div class="indexitem"></div>');
 					vin=$("<div class='vin'><a href="+item.hanfuLink+"><img alt='test'src="+item.hanfuMainPic+"></a>"+
 						"<div class='title notchosen'><a href="+item.hanfuLink+">"+item.hanfuName+"</a></div>"+"</div>");
@@ -110,13 +103,10 @@ $(function(){
 	$(window).scroll(function(event) {
 		/* Act on the event */
 		if($(document).height()-$(window).height()-$(document).scrollTop()<10){
-			//loadNewItems(x,function(items){
 				if(!imageLoading){
 					appendToMasonry();
 					imageLoading=true;
 				}
-			//alert('test');
-				
 			};
 			
 		});

@@ -5,5 +5,5 @@ require_once 'Hanfu_FileControl.class.php';
 require_once 'Hanfu_User.class.php';
 require_once 'Hanfu_Photo.class.php';
 
-print_r(SqlHelper::getSubComment(1394261930));
+print_r(SqlHelper::getOneDayByTime(2));
 ?>
