@@ -3,6 +3,7 @@
 	require_once "Hanfu_Hanfu.class.php";	
 	require_once 'Hanfu_Comment.class.php';
     require_once 'Hanfu_Photo.class.php';
+    require_once 'Hanfu_Article.class.php';
 	class SqlHelper{
 		public static function getCollectionById($userid,$id){
 			$sql="SELECT * from collectionlist where owner='$userid' and id='$id'";
@@ -230,12 +231,18 @@
 		}
 		public static function getArticle($index,$num){
 			$sql="SELECT * from article limit $index,$num";
-			SqlHelper::execute_sql($sql);
+			$res=SqlHelper::execute_sql($sql);
 			$return=array();
 			while($row=mysql_fetch_assoc($res)){
 				array_push($return, $row);
 			}
 			return $return;
+		}
+		public static function getArticleById($id){
+			$sql="SELECT * from article where id ='$id'";
+			$res=SqlHelper::execute_sql($sql);
+			$row=mysql_fetch_assoc($res);
+			return new Article($row);
 		}
 		public static function getHanfuByTaobaoId($id){
 			$sql="select * from hanfu where taobaoid='$id'";

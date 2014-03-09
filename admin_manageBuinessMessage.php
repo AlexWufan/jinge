@@ -32,5 +32,14 @@
     </div>  
 </nav>
 <div class='container main'>
-  
+  <table class='table'>
+      <tr><td>标题</td><td>修改</td><td>删除</td></tr>
+      <?
+        for ($i=0; $i <count($articles) ; $i++) { 
+         ?>
+         <tr><td><a href="article.php?id=<?echo $articles[$i]["id"];?>><?echo $articles[$i]["title"];?></td><td></td><td><a href="delete.php?type=article&id="<?echo $articles[$i]["id"];?>>删除</a></td></tr>
+      <?   
+        }
+      ?>
+  </table>
 </div>

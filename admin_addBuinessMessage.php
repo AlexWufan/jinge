@@ -29,7 +29,7 @@
     </div>  
 </nav>
 <div class='container main'>
-  <form action='uploadArticle.php' method='get' name='form1'>
+  <form action='uploadArticle.php' method='post' name='form1'>
   <div class='form-group'>
     <label class='control-label'>标题</label>
     <input type='text' class='form-control' name='title'>
