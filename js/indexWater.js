@@ -25,7 +25,7 @@ $(function(){
 					for (var i = 0; i < items.length; i++) {
 						var oneItem=$("<div class='item_one'></div>");
 						var leftItem=$("<div class='left-item'><div class='text-right'><small>"+items[i].timer+"</small><div class='author-of-item'><img src="+items[i].authorImg+"></div><span class='author-name'><strong>"+items[i].authorName+"</strong></span></div></div>");
-						var rightItem=$("<div class='item-img'><img class='item-of-img' src="+items[i].mainImg+"><div class='underImg'><a href='#' class='item-like'><span class='glyphicon glyphicon-heart'></span></a><span class='item-likeNum'>有"+items[i].admireNum+"人喜欢过这幅图</span><span class='pull-right'><a href='#' class='item-like'><span class='glyphicon glyphicon-share'></span></a></span></div></div>");
+						var rightItem=$("<div class='item-img'><img class='item-of-img' src="+items[i].mainImg+"><div class='underImg'><span class='vin_item' admire-type='oneDay' admire-admired="+items[i].isAdmired+" admire-count='true' admire-itemId='"+items[i].id+"'' admire-num='"+items[i].admireNum+"'></span><span class='pull-right'><a href='#' class='item-like'><span class='glyphicon glyphicon-share'></span></a></span></div></div>");
 						var informationItem=$("<div class='informationOfImg'><p class='information-reason'>"+items[i].reason+"</p></div>");
 						var commentBody=$("<div class='comment-body'></div>");
 						var authorIn=$("<div class='author-information'></div>");
@@ -53,6 +53,10 @@ $(function(){
 						oneItem.append(rightItem);
 					feedback.append(oneItem);
 					};
+				createAdmireItem({
+			          item:feedback.find(".vin_item"),
+			          url:"vin_uploadAdmire.php",
+			      });	
 				feedback.find('.item-of-img').each(function(){
 					var w=this.width;
 					var h=this.height;

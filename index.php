@@ -13,6 +13,9 @@
     <?
       for($i=0;$i<count($oneDayIdArr);$i++){
         $oneDay=SqlHelper::getOneDayById($oneDayIdArr[$i]);
+      
+        $isAdmired=$user->isAdmired("oneDay",$oneDay->getId());
+        
     ?>
     <div class='item_one'>
         <div class='left-item'>
@@ -28,8 +31,8 @@
           <div class='item-wrapImg'>
              <img class='item-of-img'src="<?echo $oneDay->getImage();?>"/>
              <div class='underImg'>
-                  <a timeStamp=<?echo $oneDay->getTimeStamp();?> class='item-like'><span class='glyphicon glyphicon-heart'></span> </a>
-                  <span class='item-likeNum'>有<?echo $oneDay->getAdmireNum();?>人喜欢过这附图</span>
+                  <span class='vin_item' admire-type='oneDay' admire-admired='<?echo $isAdmired;?>' admire-count='true' admire-itemId="<?echo $oneDay->getId();?>" admire-num="<?echo $oneDay->getAdmireNum();?>"> </span>
+                  <span class='item-likeNum'></span>
                   <span class='pull-right'>
                     <a class='item-like'><span class='glyphicon glyphicon-share'></span> </a>
                   </span>
@@ -45,11 +48,11 @@
                     if(count($comments)<=3){
                       for($j=0;$j<count($comments);$j++){
                         $comment=SqlHelper::getCommentById($comments[$j]);
-                        $user=SqlHelper::getUserById($comment->getCommentUserId());
+                        $commenter=SqlHelper::getUserById($comment->getCommentUserId());
                         ?>
                         <div class='comment'>                      
-                          <img src="<?echo $user->getPicture();?>">
-                          <span class='author-name'><a href="user.php?id=<?echo $user->getUserId;?>"><?echo $user->getUserName();?></a></span>
+                          <img src="<?echo $commenter->getPicture();?>">
+                          <span class='author-name'><a href="user.php?id=<?echo $commenter->getUserId;?>"><?echo $commenter->getUserName();?></a></span>
                           <span class='comment-of-index'><?echo $comment->getComment();?></span>
                         </div>
                   <?      
@@ -57,11 +60,11 @@
                   }else{
                      for($j=0;$j<3;$j++){
                         $comment=SqlHelper::getCommentById($comments[$j]);
-                        $user=SqlHelper::getUserById($comment->getCommentUserId()); 
+                        $commenter=SqlHelper::getUserById($comment->getCommentUserId()); 
                   ?>
                      <div class='comment'>                      
-                          <img src="<?echo $user->getPicture();?>">
-                          <span class='author-name'><a href="user.php?id=<?echo $user->getUserId;?>"><?echo $user->getUserName();?></a></span>
+                          <img src="<?echo $commenter->getPicture();?>">
+                          <span class='author-name'><a href="user.php?id=<?echo $commenter->getUserId;?>"><?echo $commenter->getUserName();?></a></span>
                           <span class='comment-of-index'><?echo $comment->getComment();?></span>
                         </div>
                   <?
@@ -149,53 +152,10 @@
               }
             });        
     });
-      
-         $(".item-like").mouseenter(function(event) {
-           /* Act on the event */
-           var self=$(this);
-            var heart=$(this).children('.glyphicon-heart');
-            $(this).children('.addadmire').removeClass('visibility-hide');
-            if(heart.hasClass('color-red')){
-              heart.removeClass('color-red').addClass('color-grey');
-            }else{
-              heart.addClass('color-red');
-            }
-           $(this).mouseleave(function(event) {
-            /* Act on the event */
-              self.children('.glyphicon-heart').removeClass('color-red');
-            if(heart.hasClass('color-grey')){
-                heart.removeClass('color-grey').addClass('color-red');
-              }
-            });
-         });
-
-         $(".item-like").click(function(){
-            var like =$(this),
-                  id = $(this).attr('TimeStamp');
-            var heart=$(this).children('.glyphicon-heart');
-            $.ajax({
-                url:'addAdmire.php',
-                type:'get',
-                dataType:'html',
-                data:{
-                    id:id,
-                    type:'oneDay'
-                },
-                success:function(response){
-                  console.log(response);
-                  //like.parents('.underImg').find('item-likeNum').html("有"+response+"人喜欢过这附图")；
-                  if(heart.hasClass('color-red')){
-                    heart.removeClass('color-red').addClass('color-black');
-                  }else{
-                    heart.removeClass('color-black').addClass('color-red');
-                  }
-                }
-            })     
-
-         }); 
-         
-
-
+      createAdmireItem({
+          item:$(".vin_item"),
+          url:"vin_uploadAdmire.php",
+      });
   });
 </script>
 <script type="text/javascript" src='js/imageloaded.js'></script>

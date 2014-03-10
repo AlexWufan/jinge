@@ -63,6 +63,23 @@
 			SqlHelper::execute_sql($sql) or die("error");
 			return true;
 		}
+		public static function getItemById($type,$itemId){
+			$sql="select * from $type where id='$itemId'";
+			$res=SqlHelper::execute_sql($sql);
+			$row=mysql_fetch_assoc($res);
+			switch ($type) {
+				case 'oneDay':
+					return new Photo($row);
+					break;
+				case 'user':
+					return new User($row);
+				case 'hanfu':
+					return new Hanfu($row);	
+				default:
+					header("Location:404.html");
+					break;
+			}
+		}
 		public static function updateHanfu($key,$value,$id){
 			$sql="UPDATE hanfu set $key='$value' where id ='$id'";
 			SqlHelper::execute_sql($sql);

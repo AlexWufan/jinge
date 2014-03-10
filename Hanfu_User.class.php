@@ -301,6 +301,11 @@ class User{
 		$d=array_merge($commentArr,$this->admireHanfuList);
 		return	$this->array_sort($d,1,desc);
 	} 
+	public function isAdmired($type,$itemId){
+		$item=SqlHelper::getItemById($type,$itemId);
+		$arr=$item->getList("admire");
+		return FileControl::inArray($this->userId,$arr,"userId");
+	}
 
 	private function array_sort($arr,$keys,$type='asc'){ 
 		$keysvalue = $new_array = array();

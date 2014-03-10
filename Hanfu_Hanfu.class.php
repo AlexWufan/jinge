@@ -21,7 +21,7 @@
 			$this->HanfuId=$row['id'];
 			$this->authorId=$row['userid'];
 			$this->HanfuName=$row['name'];
-			$this->admires=FileControl::readHanfuAdmiresById($this->HanfuId);
+			$this->admires=FileControl::read_file("hanfu",$this->HanfuId,"adm");
 			$this->admireNum=count($this->admires);
 			$this->main_pic=$row['main_pic'];
 			$this->type=$row['type'];
@@ -142,6 +142,9 @@
 		}
 		public function getSell(){
 			return $this->sell;
+		}
+		public function getList(){
+			return $this->admires;
 		}
 	}
 ?>

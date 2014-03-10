@@ -30,53 +30,22 @@ $(function(){
 					indexitem=$('<div class="indexitem"></div>');
 					vin=$("<div class='vin'><a href="+item.hanfuLink+"><img alt='test'src="+item.hanfuMainPic+"></a>"+
 						"<div class='title notchosen'><a href="+item.hanfuLink+">"+item.hanfuName+"</a></div>"+"</div>");
-					if(item.isLike){
 						information=$("<div class='information'><img src="+item.ownerPic+"><span class='author'><a href="+item.ownerLink+">"+
-						item.hanfuOwner+"</a></span><span>"+item.hanfuType+"</span><span showid="+item.showid+" class='admire-button  like'><span class='glyphicon glyphicon-heart color-red'></span></span><p class='description'>"+item.hanfuComment+"</p></div>");
-					}else{
-						information=$("<div class='information'><img src="+item.ownerPic+"><span class='author'><a href="+item.ownerLink+">"+
-						item.hanfuOwner+"</a></span><span>"+item.hanfuType+"</span><span showid="+item.showid+" class='admire-button like'><span class='glyphicon glyphicon-heart'></span></span><p class='description'>「"+item.hanfuComment+"」</p></div>");
-					}
-					userlike=$("<div class='userlike'><a href="+item.likeLink+" class='likeshow'><span class='glyphicon glyphicon-heart'></span><span class='like-num'> "+item.hanfuLikeNum+"</span></a><a href="+item.hanfuCommentLink+" class='comment'><span class='glyphicon glyphicon-comment'> "+item.hanfuCommentNum+"</div>");
+						item.hanfuOwner+"</a></span><span>"+item.hanfuType+"</span><p class='description'>「"+item.hanfuComment+"」</p></div>");
+					userlike=$("<div class='userlike'><span class='vin_item' admire-type='hanfu' admire-admired='"+item.isLike+"' admire-count='true' admire-itemId='"+item.showid+"' admire-num="+item.hanfuLikeNum+"></span><a href="+item.hanfuCommentLink+" class='comment'><span class='glyphicon glyphicon-comment'> "+item.hanfuCommentNum+"</div>");
 					caption=$("<div class='caption'></div>");
 					caption.append(information);
 					caption.append(userlike);
 					indexitem.append(vin);
 					indexitem.append(caption);
-					indexitem.find('.like').bind('click',function(){
-						var like=$(this),
-							id=getReq('id')||$(this).attr('showid');
-						$.ajax({
-							url: 'addAdmire.php',
-							type: 'get',
-							dataType: 'html',
-							data: {
-								id:id
-							},
-						})
-						.fail(function() {
-							console.log("error");
-						})
-						.always(function(response) {
-							if(getReq('id')){
-								$('.like .like-num').html("喜欢 "+response);
-									 location.href='show.php?id='+id;
-								
-							}else{
-								heart=like.children('.glyphicon-heart');
-								like.parents('.caption').find('.like-num').html(response);
-								if(heart.hasClass('color-red')){
-									heart.removeClass('color-red').addClass('color-black');
-								}else{
-									heart.removeClass('color-black').addClass('color-red');
-								}
-							}
-						});	
-				
-					});
-					
 					feedback.append(indexitem);
 				};
+				var option={
+					item:feedback.find(".vin_item"),
+					type:"hanfu",
+					url:"vin_uploadAdmire.php"
+				}
+				createAdmireItem(option);
 				var x=feedback.find('.indexitem');
 				callback(x);
 				index++;

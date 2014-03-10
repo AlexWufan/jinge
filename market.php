@@ -15,6 +15,7 @@
       # code...
       $hanfu=SqlHelper::getHanfuById($hanfuIdArr[$i]);
       $author=SqlHelper::getUserById($hanfu->getAuthorId());
+     
     ?>
   	<div class='indexitem'>
       <div class='vin'>
@@ -27,23 +28,6 @@
               <div class='information'>
                 <img src="<?echo $author->getPicture();?>">
                 <span class='author'><a href="user.php?id=<?echo $author->getUserId();?>"><?echo $author->getUserName();?></a></span><span><?echo $hanfu->getType();?></span>
-
-                <span showid="<?echo $hanfu->getHanfuId();?>"class='admire-button like '>
-                
-                   <?
-                    if(FileControl::inArray($hanfu->getHanfuId(),$user->getAdmireHanfuList())){
-
-                  ?>
-                  <span class='glyphicon glyphicon-heart color-red'></span>
-                  <?
-                    }else{
-
-                  ?>
-                  <span class='glyphicon glyphicon-heart'></span>
-                  <?
-                     }
-                  ?>
-                </span>
                 <span class='glyphicon glyphicon-inbox'></span>
 
                 <p class='description'>
@@ -57,8 +41,7 @@
 
               </div>
               <div class='userlike'>
-              <a href="#"class='likeshow'>
-                <span class="glyphicon glyphicon-heart"></span> <span class='like-num'><?echo $hanfu->getAdmireNum();?></span></a>
+                <span class='vin_item' admire-type='hanfu' admire-admired="<?echo  $user->isAdmired('hanfu',$hanfu->getHanfuId());?>" admire-count='true' admire-itemId="<?echo $hanfu->getHanfuId();?>" admire-num="<?echo $hanfu->getAdmireNum();?>"></span>
               <a href="show.php?id=<?echo $hanfu->getHanfuId();?>#comment" class='comment'>
                 <span class="glyphicon glyphicon-comment"></span> <?echo $hanfu->getCommentNum();?></a>	
               </div> 
@@ -77,8 +60,12 @@
 <script type="text/javascript" src="js/jquery.infinitescroll.js"></script>
 <script type="text/javascript" src='js/imageloaded.js'></script>
 <script type="text/javascript">
-
-addAdmire();
+var option={
+    item:$(".vin_item"),
+    type:"hanfu",
+    url:"vin_uploadAdmire.php"
+  }
+  createAdmireItem(option);
 </script>
 <script type="text/javascript" src='js/mywater.js'></script>
 </html>

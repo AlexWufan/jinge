@@ -666,3 +666,12 @@ form img{
 	padding-top: 70px;
 	vertical-align: baseline;
 }
+.vin_admired,.vin_notAdmired{
+	cursor: pointer;
+}
+.vin_admired{
+	color: red;
+}
+.vin_notAdmired{
+	color:grey;
+}
