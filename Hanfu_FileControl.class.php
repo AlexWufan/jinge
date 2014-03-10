@@ -4,7 +4,7 @@
 		
 		public static function saveHanfuMembersById($id,$members){
 			if(!is_dir(FileControl::$filepath."/hanfu/".$id))
-				mkdir(FileControl::$filepath."/hanfu/".$id);
+				mkdir(FileControl::$filepath."/hanfu/".$id,0777);
 			$handle=fopen(FileControl::$filepath."/hanfu/".$id."/".$id.".mem","w+b");
 			$str=serialize($members);
 			fwrite($handle,$str);
@@ -14,7 +14,7 @@
 		public static function saveUserPic($id,$picname){
 			if(!is_dir(FileControl::$filepath."/user/".$id))
 				mkdir(FileControl::$filepath."/user/".$id);
-			move_uploaded_file($picname, $filepath."/user/$id/$id.jpg");
+			move_uploaded_file($picname,FileControl::$filepath."/user/$id/$id.jpg");
 		}
 
 		
@@ -88,7 +88,18 @@
 			}else
 				return array();
 		}
-		
+		public static function read_file($type,$id,$item){
+			$fileName=FileControl::$filepath."/$type/$id.$item";
+			if(FileControl::isExists($fileName)){
+				$handle=fopen($fileName,"rb");
+				$str=fread($handle, filesize($fileName));
+				$arr=(array)unserialize($str);
+				fclose($handle);
+				return $arr;
+			}else{
+				return array();
+			}
+		}
 		public static function readHanfuAdmiresById($id){
 			if(FileControl::isExists(FileControl::$filepath."/hanfu/$id/$id.adm")){
 				$handle=fopen(FileControl::$filepath."/hanfu/$id/$id.adm","rb");
@@ -307,8 +318,28 @@
 				
 			}
 		}
+		public static function savemarkScore($userid,$hanfuid,$score){			
+			if(!is_dir(FileControl::$filepath."/hanfu/$hanfuid/"))
+				mkdir(FileControl::$filepath."/hanfu/$hanfuid/");
+			$handle=fopen(FileControl::$filepath."/hanfu/$hanfuid/score.rate","w+b");
+			$str=serialize($score);
+			fwrite($handle,$str);
+			fclose($handle);
+		}
+		public static function getMarkedPeopleList($hanfuid){
+			if(FileControl::isExists(FileControl::$filepath."/hanfu/$hanfuid/score.rate")){
+				$handle=fopen(FileControl::$filepath."/hanfu/$hanfuid/score.rate", "r+");
+				$str=fread($handle,filesize(FileControl::$filepath."/hanfu/$hanfuid/score.rate"));
+				fclose($handle);
+				$Temp=unserialize($str);
+				return $Temp; 
+			}else{
+				return Array();
+			}
+		}
 		public static function readAllFile($url){
 			$files=array();
+			if(!is_dir($url)) return array();
 			if($handle=opendir($url)){
 				while (false !== ($file =readdir($handle))) {
 					if($file=='.'||$file=="..")
@@ -339,17 +370,17 @@
 			else
 				return false;
 		}
-		public static function inArray($var,$array){
+		public static function inArray($var,$array,$type){
 			for($i=0;$i<count($array);$i++){
-				if($var==$array[$i][0])
+				if($var==$array[$i][$type])
 					return true;
 			}
 			return false;
 		}
-		public static function inArrayReturnKey($array,$var){
+		public static function inArrayReturnKey($array,$var,$type){
 			for($i=0;$i<count($array);$i++){
-				if($var==$array[$i][0])
-					return $i+1;
+				if($var==$array[$i][$type])
+					return $i;
 			}
 			return false;
 		}
@@ -360,13 +391,13 @@
 			}
 			return $returnArr;
 		}
-		public static function arrayRemove($arr,$id) 
+		public static function arrayRemove($arr,$id,$type) 
 		{ 	
-			$index=FileControl::inArrayReturnKey($arr,$id);
-			if($index){
-				$index=$index-1;
-				array_splice($arr, $index, 1); 
-			}
+			$index=FileControl::inArrayReturnKey($arr,$id,$type)+1;
+			if($index)
+				array_splice($arr, $index-1, 1);
+			else
+				die("error");	 
 			return $arr;
 		}	
 		public static function array_offset($arr,$id){
@@ -380,10 +411,72 @@
 				$now=date("Y-m-d H:i:s");
 				return $now;
 		}
-		public static function countAdmire($arr){
-			for ($i=0; $i <count() ; $i++) { 
-				# code...
+		public static function saveAdmire($itemId,$type,$userid,$idType="userId"){
+			if(!is_dir(FileControl::$filepath."/$type/$itemId/"))
+					mkdir(FileControl::$filepath."/$type/$itemId/",0777);
+				$fileName=FileControl::$filepath."/$type/$itemId/".$itemId.".adm";
+				$arr=FileControl::readFileByName($fileName);
+				$handle=fopen($fileName,"w+b");
+				$data=FileControl::makeStructureOfFile($arr,$idType,$userid);
+				fwrite($handle,serialize($data));
+				fclose($handle);
+				return count($data);
+		}
+		public static function readFileByName($filePath){
+			if(FileControl::isExists($filePath)){
+				$handle=fopen($filePath,"rb");
+				$str=fread($handle,filesize($filePath));
+				$admires=unserialize($str);
+				fclose($handle);
+				return $admires;
+			}else 
+				return array();
+		}
+		public static function makeStructureOfFile($arr,$type,$userid){
+			$now=FileControl::now();
+			if(!FileControl::inArray($userid,$arr,$type)){
+				$temp=array("time"=>$now,$type=>$userid);
+				array_push($arr,$temp);
+				return $arr;
+				}			
+			else
+				return FileControl::arrayRemove($arr,$userid,$type);
+		}
+		public static function caucalateTheSumOfRate($list){
+			 	$items=array();
+			 	$sum1=0;
+				 $sum2=0;
+				 $sum3=0;
+				 $sum4=0;
+				 $count1=0;
+				 $count2=0;
+				 $count3=0;
+				 $count4=0;
+			 if($list){
+				for($i=0;$i<count($list);$i++){
+					if($list[$i][2]['items1']!== 0 ) $count1++;
+					if($list[$i][2]['items2']!== 0 ) $count2++;
+					if($list[$i][2]['items3']!== 0 ) $count3++;
+					if($list[$i][2]['items4']!== 0 ) $count4++;
+					$sum1=$sum1+$list[$i][2]['items1'];
+					$sum2=$sum2+$list[$i][2]['items2'];
+					$sum3=$sum3+$list[$i][2]['items3'];	
+					$sum4=$sum4+$list[$i][2]['items4'];	
+				}	
+				array_push($items,round($sum1/$count1,1));
+				array_push($items,round($sum2/$count2,1));
+				array_push($items,round($sum3/$count3,1));
+				array_push($items,round($sum4/$count4,1));
+				
+				return $items;
+			 }
+			else{
+				array_push($items,0);
+				array_push($items,0);
+				array_push($items,0);
+				array_push($items,0);
+				return $items;
 			}
-		} 
+		}
 	}
 ?>

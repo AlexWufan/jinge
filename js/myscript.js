@@ -141,6 +141,12 @@
 					if(response==0){
 						window.location.reload();
 					}
+                    if(response==1){
+                        window.alert("密码错误！");
+                    }
+                    if(response==2){
+                        window.alert("账户名不存在！");
+                    }
 				}
 			})
 		});
@@ -180,7 +186,7 @@
 							imgs:imgStr,
 							title:title,
 							comment:comment
-						},
+						}
 				})
 				.done(function(response) {
 					location.href="show.php?id="+response;
@@ -225,7 +231,7 @@
 				dataType: 'html',
 				data: {
 					id:id
-				},
+				}
 			})
 			.fail(function() {
 				console.log("error");
@@ -507,6 +513,51 @@
 			
 		});
 	}
-
+function createAdmireItem(option){
+	var item=option.item;//object
+	var ajaxUrl=option.url;
+	item.each(function(){
+		var that = $(this);
+		var countable=that.attr("admire-count");//boolean
+		var type=that.attr("admire-type");//string
+		var itemId=that.attr("admire-itemId");//string or number
+		var initNum=that.attr("admire-num");//number
+		var admired=that.attr('admire-admired');//boolean
+		var content=$("<span  class='vin_admire '><span class='glyphicon glyphicon-heart'></span></span><span class='vin_count'>"+initNum+"</span>");
+		if(admired=="1" || admired=="true")
+			content.find(".glyphicon-heart").addClass('vin_admired');
+		else
+			content.find(".glyphicon-heart").addClass('vin_notAdmired');
+		that.append(content);
+	});
+	item.click(function(event){
+		var adm=$(this);
+		var heart=$(this).find(".glyphicon-heart");
+		if(heart.hasClass('vin_admired')){
+			heart.removeClass('vin_admired').addClass('vin_notAdmired');
+		}else{
+			heart.removeClass('vin_notAdmired').addClass('vin_admired');
+		}
+		$.ajax({
+			url:ajaxUrl,
+			method:'get',
+			data:
+			{
+				itemId:$(this).attr("admire-itemId"),
+				type:$(this).attr("admire-type"),
+			},
+			dataType:'html',
+			success:function(response){
+				console.log(response);
+				if(response >= 0 )
+					adm.find(".vin_count").html(response);
+				
+			},
+			error:function(error){
+				console.log(error);
+			}
+		});
+	});
+}
 
 //});

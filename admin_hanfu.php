@@ -20,6 +20,12 @@
     <ul class="nav navbar-nav">
       <li ><a href="admin.php">用户</a></li>
       <li class="active"><a href="admin_hanfu.php">汉服</a></li>
+      <li ><a href="admin_comment.php">评论</a></li> 
+      <li><a href="admin_updateIndex.php">编辑首页</a></li>
+      <li ><a href="admin_manageIndex.php">首页管理</a></li>
+      <li ><a href="admin_addBuinessMessage.php">增加商家动态</a></li>
+      <li><a href="admin_manageBuinessMessage.php">管理商家动态</a></li>
+      
     </ul>
     </div>  
 </nav>
@@ -32,7 +38,7 @@
 		$idArr=SqlHelper::getAllHanfuId();
 		for($i=0;$i<count($idArr);$i++){
 			$hanfu=SqlHelper::getHanfuById($idArr[$i]);
-			echo "<tr><td><a href=show.php?id=".$hanfu->getHanfuId()." class='btn btn-link'>".$hanfu->getHanfuName()."</a></td><td><a href=user.php?id=".$hanfu->getAuthorId().">".SqlHelper::getUserById($hanfu->getAuthorId())->getUserName()."</a></td><td></td><td><a href=delete.php?type=hanfu&id=".$hanfu->getHanfuId().">删除</a></td></tr>";
+			echo "<tr><td><a target='_blank' href=show.php?id=".$hanfu->getHanfuId().">".$hanfu->getHanfuName()."</a></td><td><a href=user.php?id=".$hanfu->getAuthorId().">".SqlHelper::getUserById($hanfu->getAuthorId())->getUserName()."</a></td><td></td><td><a href=delete.php?type=hanfu&id=".$hanfu->getHanfuId().">删除</a></td></tr>";
 		}
 	?>
 </table>

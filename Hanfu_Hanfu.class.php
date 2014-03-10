@@ -17,30 +17,28 @@
 		private $link;
 		private $comment;
 		
-	    function __construct($HanfuId,$authorId,$HanfuName,$main_pic,$type,$imgs,$link,$comment){
-			$this->HanfuId=$HanfuId;
-			$this->authorId=$authorId;
-			$this->HanfuName=$HanfuName;
-			//$this->members=FileControl::readHanfuMembersById($this->HanfuId);
-			$this->admires=FileControl::readHanfuAdmiresById($this->HanfuId);
-			//$this->memberNum=count($this->members);
+	    function __construct($row){
+			$this->HanfuId=$row['id'];
+			$this->authorId=$row['userid'];
+			$this->HanfuName=$row['name'];
+			$this->admires=FileControl::read_file("hanfu",$this->HanfuId,"adm");
 			$this->admireNum=count($this->admires);
-			$this->main_pic=$main_pic;
-			$this->type=$type;
-			$this->imgs=$imgs;
-			$this->link=$link;
-			$this->comment=$comment;
+			$this->main_pic=$row['main_pic'];
+			$this->type=$row['type'];
+			$this->imgs=$row['imgs'];
+			$this->link=$row['link'];
+			$this->comment=$row['comment'];
+			$this->business=$row['business'];
+			$this->structure=$row['structure'];
+			$this->other=$row['other'];
+			$this->color=$row['color'];
+			$this->element=$row['element'];
+			$this->sell=$row['sell'];
 			$this->commentNum=SqlHelper::getHanfuCommentsNum($this->HanfuId);
 		}
 		function __destruct(){
-			unset($HanfuId);
-			unset($authorId);
-			unset($HanfuName);
-			unset($main_pic);
-			unset($type);
-			unset($imgs);
-			unset($link);
-			unset($comment);
+			unset($row);
+
 		}
 		public function getHanfuId(){
 			return $this->HanfuId;
@@ -54,7 +52,12 @@
 			return $this->HanfuName;
 		}
 		public function getMain_pic(){
-			return $this->main_pic;
+			if($this->main_pic)
+				return $this->main_pic;
+			else{
+				$files=glob("hanfu/".$this->HanfuId."/img/*.jpg");
+				return $files[0];
+			}
 		}
 		public function getType(){
 			switch ($this->type) {
@@ -69,14 +72,21 @@
 					$return='推荐';
 					# code...
 					break;
+				case 'find':
+					$return='寻找';
+					break;	
 			}
 			return $return;
 		}
 		public function getImgs(){
 			$returnArr=array();
-			$arr=explode(',',$this->imgs);
-			for($i=0,$max=count($arr);$i<$max;$i++){
-				array_push($returnArr, $arr[$i]);
+			if($this->imgs){
+				$arr=explode(',',$this->imgs);
+				for($i=0,$max=count($arr);$i<$max;$i++){
+					array_push($returnArr, $arr[$i]);
+				}
+			}else{
+				$returnArr=glob("hanfu/".$this->HanfuId."/img/*.jpg");
 			}
 			return $returnArr;
 		}
@@ -114,6 +124,27 @@
 		}
 		public function getCommentNum(){
 			return $this->commentNum;
+		}
+		public function getBusiness(){
+			return $this->business;
+		}
+		public function getStructure(){
+			return $this->structure;
+		}
+		public function getOther(){
+			return $this->other;
+		}
+		public function getColor(){
+			return $this->color;
+		}
+		public function getElement(){
+			return $this->element;
+		}
+		public function getSell(){
+			return $this->sell;
+		}
+		public function getList(){
+			return $this->admires;
 		}
 	}
 ?>

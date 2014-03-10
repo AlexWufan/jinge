@@ -22,6 +22,7 @@
 			  <li><a href="attention.php">关注</a></li>
 			  <li><a href='other.php'>别的动态</a><li>
 			  <li><a href="backet.php">篮子</a></li>	
+			  <li><a href="photoGallery.php">相册</a></li>
 			</ul>
 			<?
 				}else{

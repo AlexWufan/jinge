@@ -19,6 +19,7 @@ class User{
 	private $fansList;
 	private $fansPath;
 	private $fansNum;
+	private $markedPeopleList;
 
 	public function __construct($userId,$userName,$password,$email,$intime,$describe){
 		$this->userId=$userId;
@@ -27,7 +28,7 @@ class User{
 		$this->email=$email;
 
 		$this->collectHanfuList=FileControl::readUserCollectById($this->userId);
-		$this->admireHanfuList=FileControl::readUserAdmireById($this->userId);
+		$this->admireHanfuList=FileControl::read_file("user",$this->userId,"adm");
 		$this->collectHanfuNum=count($this->collectHanfuList);
 		$this->admireHanfuNum=count($this->admireHanfuList);
 		$this->picture=FileControl::readUserPic($this->userId);
@@ -37,6 +38,7 @@ class User{
 		$this->fansList=FileControl::readUserFansById($this->userId);
 		$this->attentionPeopleNum=count($this->attentionPeopleList);
 		$this->fansNum=count($this->fansList);
+		
 	}
 	function __destruct(){
 			unset($userId);
@@ -174,22 +176,27 @@ class User{
 		sqlHelper::delCollectionList($this->userId,$name);
 		FileControl::delCollectionList($userid,$collect);
 	}
-	public function admireHanfu($Hanfu){
-		if(!FileControl::inArray($Hanfu->getHanfuId(),$this->fansList)){
+	public function admireHanfu($Hanfu,$option=""){
+		
+		if(!is_null($option)){
+			$id=$Hanfu->getTimeStamp();
+		}else{
+			$id=$Hanfu->getHanfuId();
+		}
+		if(!FileControl::inArray($id,$this->admireHanfuList)){
 			date_default_timezone_set('Asia/Shanghai');
 			$now=date("Y-m-d H:i:s");
 			$type="admire";
 			$arr=array();
-			array_push($arr,$Hanfu->getHanfuId());
+			array_push($arr,$id);
 			array_push($arr,$now);
 			array_push($arr,$type);
 			array_push($this->admireHanfuList,$arr);
-			FileControl::saveUserAdmireHanfuById($this->userId,$this->admireHanfuList);	
-			//$this->addUserInfo($this->userId,$this->admireHanfuList);		
+			FileControl::saveUserAdmireHanfuById($this->userId,$this->admireHanfuList);			
 		}else{
-			//$list=fileControl::toBeNewArr($this->admireHanfuList);
-			FileControl::deleteAdmire($this->userId,$Hanfu->getHanfuId());
-			//$this->delUserInfo($this->userId,$hanfu->getHanfuId());
+			
+			FileControl::deleteAdmire($this->userId,$id);
+			
 		}
 		$Hanfu->setAdmire($this->userId);
 	}
@@ -201,16 +208,17 @@ class User{
 			return false;
 		
 	}
-	
+	public function addArticle($title,$content,$now){
+		SqlHelper::addArticle($this->userId,$title,$content,$now);
+	}
 	public function setComment($toid,$content,$type,$hanfuid){
 		date_default_timezone_set('Asia/Shanghai');
 		$commentdate=date("Y-m-d H:i:s");
 		SqlHelper::insertComment($this->userId,$toid,$hanfuid,$content,$type,$commentdate);
 	}
 	
-	public function uploadHanfu($name,$main_pic,$comment,$type,$imgs,$taobaoid,$link){
-		SqlHelper::InsertHanfu($this->userId,$name,$main_pic,$comment,$type,$imgs,$taobaoid,$link);
-		return true;
+	public function uploadHanfu($data){
+		return	SqlHelper::InsertHanfu($this->userId,$data);
 	}
 	
 	public function addAttentionPeople($user){
@@ -266,11 +274,45 @@ class User{
 		$d=array_merge($commentArr,$this->admireHanfuList);
 		FileControl::saveUserInfo($this->userId,$d);
 	}
+	public function rateHanfu($hanfuid,$data){
+		//data=[5,4,3,2];
+		//存入 userid，时间，data
+		$markedPeopleList=FileControl::getMarkedPeopleList($hanfuid);
+		if(!FileControl::inArray($this->userId,$markedPeopleList)){
+			date_default_timezone_set('Asia/Shanghai');
+			$now=date("Y-m-d H:i:s");
+			$arr=array();
+			$returnArr=array();
+			array_push($arr,$this->userId);//userid
+			array_push($arr,$now);//time
+			array_push($arr,$data);//data
+			array_push($markedPeopleList,$arr);
+			FileControl::savemarkScore($this->userId,$hanfuid,$markedPeopleList);
+			$returnArr["allRate"]=FileControl::caucalateTheSumOfRate($markedPeopleList);
+			$returnArr["ratePeople"]=count($markedPeopleList);
+			return json_encode($returnArr);
+		}else{
+			return -1;
+		}	
+
+	}
+	public function admire($itemId,$type){
+		FileControl::saveAdmire($this->userId,"user",$itemId,"admire");
+		return FileControl::saveAdmire($itemId,$type,$this->userId);
+	}
+	public function getUploadHanfus(){
+		return $idArr=SqlHelper::getUploadHanfus($this->userId);
+	}
 	public function getInfo(){
 		$commentArr=SqlHelper::getCommentsByUserId($this->userId);
 		$d=array_merge($commentArr,$this->admireHanfuList);
 		return	$this->array_sort($d,1,desc);
 	} 
+	public function isAdmired($type,$itemId){
+		$item=SqlHelper::getItemById($type,$itemId);
+		$arr=$item->getList("admire");
+		return FileControl::inArray($this->userId,$arr,"userId");
+	}
 
 	private function array_sort($arr,$keys,$type='asc'){ 
 		$keysvalue = $new_array = array();

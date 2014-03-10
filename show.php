@@ -13,7 +13,10 @@
   $nums=$hanfu->getCommentNum();
   $subpages=10;
   $pageCurrent=$_GET['p'];
+  $markedPeopleList=FileControl::getMarkedPeopleList($id);
+  $allRate=FileControl::caucalateTheSumOfRate($markedPeopleList);
 ?>
+<link rel='stylesheet' type="text/css" href='rank/rateit.css'>
 <link rel="stylesheet" type="text/css" href="css/lightbox.css">
 <div class='container '>
    <div class='row'>
@@ -23,33 +26,61 @@
             <div class='wrapShowImg'>
             <img  src="<?echo $hanfu->getMain_pic();?>"> 
             </div>
-            <div class='wrapShowMessage'>
-              <h5><a href="<?echo $hanfu->getLink();?>"><?echo $hanfu->getHanfuName();?></a></h5>
-              <div class='info'>
-                <span class='like'>
-                  <?
-                    if(FileControl::inArray($hanfu->getHanfuId(),$user->getAdmireHanfuList())){
-
-                  ?>
-                  <span class='glyphicon glyphicon-heart color-red'></span> 
-                  <span class='like-num'>喜欢 <?echo $hanfu->getAdmireNum();?></span>
-                  <span  class='visibility-hide addadmire'>-1</span>
-                  <?
-                   }else{ 
-                  ?>
-                  <span class='glyphicon glyphicon-heart'></span> 
-                  <span class='like-num'>喜欢 <?echo $hanfu->getAdmireNum();?></span>
-                  <span  class='visibility-hide addadmire'>+1</span>
-                  <?
-                    }
-                  ?>
-                </span>
+            <div class='info'>
+                <span class='vin_item' admire-type='hanfu' admire-count='true' admire-itemId="<?echo $hanfu->getHanfuId();?>" admire-admired="<?echo $user->isAdmired('hanfu',$hanfu->getHanfuId());?>" admire-num="<?echo $hanfu->getAdmireNum();?>"></span>
                  | 
                  <span class='join'>
                   <a class='btn btn-info' data-toggle="modal" data-target="#CollectionBox">加入篮子</a> 
                    <a href="<?echo $hanfu->getLink();?>"class='btn btn-danger'>去购买</a>
                  </span>
                 
+              </div>
+            <div class='wrapShowMessage pull-right'>
+              <h5><a href="<?echo $hanfu->getLink();?>"><?echo $hanfu->getHanfuName();?></a></h5>
+              <ul>
+                <li>商家:<?echo $hanfu->getBusiness();?></li>
+                <li>形制:<?echo $hanfu->getStructure();?></li>
+                <li>其他:<?echo $hanfu->getOther();?></li>
+                <li>颜色:<?echo $hanfu->getColor();?></li>
+                <li>元素:<?echo $hanfu->getElement();?></li>
+                <li>销售情况:<?echo $hanfu->getSell();?></li>
+              </ul>
+              <div class='rank'>
+                <?
+                  if(!FileControl::inArray($user->getUserId(),$markedPeopleList,"rank")){
+                ?>
+                <ul>
+                <li>评分1：
+                    <input type='rate' value='0' min='0' max='5' step='0.5' id='backing1'/>
+                    <div class='rateit' data-rateit-backingfld='#backing1' data-rateit-resetable="false">   
+                    </div>
+                     <span class='showRate myRate'>0</span>  
+                </li>
+                <li>评分2：
+                    <input type='rate' value='0' min='0' max='5' step='0.5' id='backing2'/>
+                    <div class='rateit' data-rateit-backingfld='#backing2'data-rateit-resetable="false"></div>
+                    <span class='showRate myRate'>0</span>
+                </li>
+                <li>评分3：
+                    <input type='rate' value='0' min='0' max='5' step='0.5' id='backing3'/>
+                    <div class='rateit' data-rateit-backingfld='#backing3'data-rateit-resetable="false"></div>
+                    <span class='showRate myRate'>0</span>
+                </li>
+                <li>评分4：
+                    <input type='rate' value='0' min='0' max='5' step='0.5' id='backing4'/>
+                    <div class='rateit' data-rateit-backingfld='#backing4'data-rateit-resetable="false"></div>
+                    <span class='showRate myRate'>0</span>
+                </li>
+                 <button class='btn btn-default pull-right' id='updateRate'>提交点评</button>
+                <?
+                  }else{
+                ?>
+                    <div class="alert alert-warning alert-dismissable" >您已经参与过投票</div>
+                <?
+                  }
+                ?>
+                </ul>
+               
               </div>
             </div>
             <hr>
@@ -183,7 +214,7 @@
                   <?
                     $admires=$hanfu->getAdmires();
                     for($i=0;$i<count($admires);$i++){
-                      $admireUser=SqlHelper::getUserById($admires[$i][0]);
+                      $admireUser=SqlHelper::getUserById($admires[$i]["userId"]);
                   ?>
                     <div class='like-item'>
                       <div class='like-img-wrap'>
@@ -204,7 +235,18 @@
     <div class='col-md-3'>
       <div class='panel panel-default'>
         <div class='panel-body'>
-          otherThings
+          <h4>总评</h4>
+          <p class='alert-success'>共有<?echo count($markedPeopleList);?>人评分</p>
+          <hr>
+          <ul class='nopadding'>
+            <?
+              for($i=0;$i<count($allRate);$i++){
+            ?>
+            <li>评分<?echo $i+1;?>：<span class="rateit allRate" data-rateit-value="<?echo $allRate[$i];?>" data-rateit-ispreset="true" data-rateit-readonly="true"></span><span class='showRate'><?echo $allRate[$i];?></span></li>
+          <?
+            }
+          ?>
+          </ul>
         </div>
       </div>
     </div>
@@ -214,9 +256,47 @@
   include_once 'footer.html';
 ?>
 <script src="js/lightbox-2.6.min.js"></script>
+<script type="text/javascript" src='rank/jquery.rateit.min.js'></script>
 <script type="text/javascript">
-  addAdmire();
+  var option={
+    item:$(".vin_item"),
+    type:"hanfu",
+    url:"vin_uploadAdmire.php"
+  }
+  createAdmireItem(option);
   showComment();
   switchTab();
-  
+  $('.rateit').click(function(){
+    var item=$(this).attr("data-rateit-backingfld");
+   $(this).parent().children('.showRate').html($(item)[0].value);
+  });  
+  $('#updateRate').click(function(){
+      var ISRATED = -1;
+      var ALRIGHT = 0;
+      var obj={};
+      var temp={};
+      var items=$('.myRate');
+      obj['hanfuid']=getReq('id');
+      var itemsKey=["items1","items2",'items3','items4'];
+      items.each(function(index, el) {
+       temp[itemsKey[index]]=$(this).html();
+      });
+      obj['data']=temp;
+      $.ajax({
+        url: 'addRate.php',
+        type: 'get',
+        dataType: 'json',
+        data: obj,
+        success:function(response){
+          console.log(response);
+          if(response == ISRATED){
+            alert('您已经参与过评分，按规则不能刷分！');
+              return;
+          }
+          else
+              window.location.href="show.php?id="+getReq('id')+"";
+        }
+
+    }); 
+  });
 </script>

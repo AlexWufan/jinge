@@ -20,6 +20,11 @@
     <ul class="nav navbar-nav">
       <li class="active"><a href="admin.php">用户</a></li>
       <li ><a href="admin_hanfu.php">汉服</a></li>
+      <li ><a href="admin_comment.php">评论</a></li> 
+      <li><a href="admin_updateIndex.php">编辑首页</a></li>
+      <li ><a href="admin_manageIndex.php">首页管理</a></li>
+      <li ><a href="admin_addBuinessMessage.php">增加商家动态</a></li>
+      <li><a href="admin_manageBuinessMessage.php">管理商家动态</a></li>
     </ul>
     </div>  
 </nav>

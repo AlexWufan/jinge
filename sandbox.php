@@ -3,14 +3,10 @@
 require_once 'Hanfu_SqlHelper.class.php';
 require_once 'Hanfu_FileControl.class.php';
 require_once 'Hanfu_User.class.php';
+require_once 'Hanfu_Photo.class.php';
 $user=SqlHelper::getUserById(16);
-$id=2;
-echo $user->getCollectionById($id);
-$userid=16;
-$collection="hanfu";
-//$user->addCollectionItem($collection,13);
-//echo filesize("./user/$userid/collection/$collection.cl");
-//print_r($user->showCollection("hanfu"));
-//FileControl::addCollectionItem(16,$collection,15);
-print_r($user->showCollection("hanfu"));
+echo $user->isAdmired("oneDay",14);
+echo $user->isAdmired("oneDay",17);
+echo $user->isAdmired("oneDay",19);
+
 ?>
