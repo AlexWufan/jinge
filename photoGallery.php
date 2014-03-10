@@ -1,6 +1,6 @@
 <?
 	include_once 'head.html';
-	include_once 'Hanfu_SqlHelper.class.php';
+	require_once 'Hanfu_FileControl.class.php';
 	$sessionid=SqlHelper::getUserIdByName($_SESSION['userName']);
 	if(!is_null($_GET['id'])){
 		$pageid=$_GET['id'];	
@@ -17,12 +17,12 @@
 			?>
 			<h3>我的主页</h3>
 			<ul class="nav nav-pills">
-			  <li class="active"><a href="#">我</a></li>
+			  <li ><a href="#">我</a></li>
 			  <li><a href="fans.php">粉丝</a></li>
 			  <li><a href="attention.php">关注</a></li>
 			  <li><a href='other.php'>别的动态</a><li>
 			  <li><a href="backet.php">篮子</a></li>	
-			  <li><a href="photoGallery.php">相册</a></li>
+			  <li class="active"><a href="photoGallery.php">相册</a></li>
 			</ul>
 			<?
 				}else{
@@ -32,47 +32,15 @@
 				}
 			?>
 			<div class='lineHr'></div>
-			<div id='userINFO' userid="<?echo $user->getUserId();?>" type="me"></div>
 			<?
-				$num=3;
-				$hanfulist=$user->getInfo();
-				for ($i=0;$i<$num;$i++) { 
-					if($hanfulist[$i][0]==null)continue;
-					$hanfu=SqlHelper::getHanfuById($hanfulist[$i][0]);
-					$author=SqlHelper::getUserById($hanfu->getAuthorId());
-					$time=$hanfulist[$i][1];
-			?>
-			<div class='user-item'>
-				<p class='userinfo'>
-					<?
-						if($hanfulist[$i][2]=='comment'){
-					?>
-					<span class='glyphicon glyphicon-comment'> 评论了汉服</span>
-					<?
-						}else{
-					?>
-					<span class='glyphicon glyphicon-heart'> 喜欢了汉服</span>
-					<?
-						}
-					?>
-					<span class='time'><?echo $time;?></span>
-				</p>
-				<div class='hanfuinfo'>
-					<div class='info-title'>
-						<img src="<?echo $author->getPicture();?>">
-						<a href="user.php?id=<?echo $author->getUserId();?>"><?echo $author->getUserName();?></a>的汉服<a href='show.php?id=<?echo $hanfu->getHanfuId();?>'><?echo $hanfu->getHanfuName();?></a>
-					</div>				
-					<div class='main-img'>
-						<img src="<?echo $hanfu->getMain_pic();?>">
-					</div>
-					<div class='info-bottom'>
-						<p><a href="#"></span>喜欢</a>·<a href='#'>加入篮子</a>·<a href="show.php?id=<?echo $hanfu->getHanfuId();?>#comment">回应</a></p>
-					</div>
-				</div>
-				<div class='lineHr'></div>
-			</div>
-			<?
+			$ids=$user->getUploadHanfus();
+			for($i=0;$i<count($ids);$i++){
+				$src="./hanfu/".$ids[$i]."/img/";
+				$arr=FileControl::readAllFile($src);
+				for($j=0;$j<count($arr);$j++){
+					echo "<img style='width:300px;height:300px' src=".$src.$arr[$j]."jpg>";
 				}
+			}
 			?>
 			</div>
 		<div class='col-md-4'>

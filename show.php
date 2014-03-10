@@ -27,24 +27,7 @@
             <img  src="<?echo $hanfu->getMain_pic();?>"> 
             </div>
             <div class='info'>
-                <span class='like'>
-                  <?
-                    if(FileControl::inArray($hanfu->getHanfuId(),$user->getAdmireHanfuList())){
-
-                  ?>
-                  <span class='glyphicon glyphicon-heart color-red'></span> 
-                  <span class='like-num'>喜欢 <?echo $hanfu->getAdmireNum();?></span>
-                  <span  class='visibility-hide addadmire'>-1</span>
-                  <?
-                   }else{ 
-                  ?>
-                  <span class='glyphicon glyphicon-heart'></span> 
-                  <span class='like-num'>喜欢 <?echo $hanfu->getAdmireNum();?></span>
-                  <span  class='visibility-hide addadmire'>+1</span>
-                  <?
-                    }
-                  ?>
-                </span>
+                <span class='vin_item' admire-type='hanfu' admire-count='true' admire-itemId="<?echo $hanfu->getHanfuId();?>" admire-admired="<?echo $user->isAdmired('hanfu',$hanfu->getHanfuId());?>" admire-num="<?echo $hanfu->getAdmireNum();?>"></span>
                  | 
                  <span class='join'>
                   <a class='btn btn-info' data-toggle="modal" data-target="#CollectionBox">加入篮子</a> 
@@ -64,7 +47,7 @@
               </ul>
               <div class='rank'>
                 <?
-                  if(!FileControl::inArray($user->getUserId(),$markedPeopleList)){
+                  if(!FileControl::inArray($user->getUserId(),$markedPeopleList,"rank")){
                 ?>
                 <ul>
                 <li>评分1：
@@ -231,7 +214,7 @@
                   <?
                     $admires=$hanfu->getAdmires();
                     for($i=0;$i<count($admires);$i++){
-                      $admireUser=SqlHelper::getUserById($admires[$i][0]);
+                      $admireUser=SqlHelper::getUserById($admires[$i]["userId"]);
                   ?>
                     <div class='like-item'>
                       <div class='like-img-wrap'>
@@ -275,7 +258,12 @@
 <script src="js/lightbox-2.6.min.js"></script>
 <script type="text/javascript" src='rank/jquery.rateit.min.js'></script>
 <script type="text/javascript">
-  addAdmire();
+  var option={
+    item:$(".vin_item"),
+    type:"hanfu",
+    url:"vin_uploadAdmire.php"
+  }
+  createAdmireItem(option);
   showComment();
   switchTab();
   $('.rateit').click(function(){

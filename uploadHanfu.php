@@ -15,7 +15,9 @@
 	$data['sell']=$_GET['sell'];
 	$data["comment"]=$_GET['comment'];
 	$data["type"]=$_GET['typeRadio'];
+
 	$id=$user->uploadHanfu($data);
+	
 	if($id){
 		header("Location:./SwfUpload/index.php?id=$id");
 	}else{

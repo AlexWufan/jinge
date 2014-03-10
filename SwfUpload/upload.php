@@ -36,11 +36,12 @@
 	}
 	date_default_timezone_set('Asia/Shanghai');
 	$now=date("U");
+	$rand=rand(0,32767);
+	$now=$now-$rand;
 	if(isset($_FILES['Filedata'])||!is_uploaded_file($_FILES['Filedata']['tmp_name'])||$_FILES['Filedata']['error']!=0){
 		$upload_file=$_FILES['Filedata'];
 		$file_info=pathinfo($upload_file['name']);
-		$file_type=$file_info['extension'];
-		
+		$file_type=$file_info['extension'];		
 		if(!is_dir("../hanfu/".$hanfuId.'/img'))
 			create_folders("../hanfu/".$hanfuId.'/img');			
 		$save='../hanfu/'.$hanfuId.'/img/'.$now.".".$file_type;

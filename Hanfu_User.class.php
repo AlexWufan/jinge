@@ -28,7 +28,7 @@ class User{
 		$this->email=$email;
 
 		$this->collectHanfuList=FileControl::readUserCollectById($this->userId);
-		$this->admireHanfuList=FileControl::readUserAdmireById($this->userId);
+		$this->admireHanfuList=FileControl::read_file("user",$this->userId,"adm");
 		$this->collectHanfuNum=count($this->collectHanfuList);
 		$this->admireHanfuNum=count($this->admireHanfuList);
 		$this->picture=FileControl::readUserPic($this->userId);
@@ -295,6 +295,13 @@ class User{
 			return -1;
 		}	
 
+	}
+	public function admire($itemId,$type){
+		FileControl::saveAdmire($this->userId,"user",$itemId,"admire");
+		return FileControl::saveAdmire($itemId,$type,$this->userId);
+	}
+	public function getUploadHanfus(){
+		return $idArr=SqlHelper::getUploadHanfus($this->userId);
 	}
 	public function getInfo(){
 		$commentArr=SqlHelper::getCommentsByUserId($this->userId);

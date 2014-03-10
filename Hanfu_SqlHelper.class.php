@@ -34,10 +34,10 @@
 			date_default_timezone_set('Asia/Shanghai');
 			$addtime=date("Y-m-d H:i:s");
 			if(!is_null($data['taobaoid'])){
-						$sql="insert into hanfu(userid,name,addtime,admirenum,main_pic,type,imgs,taobaoid,link,comment) values ('$userid','".$data["title"]."','$addtime',0,'".$data["main_pic"]."','".$data["type"]."','".$data["imgs"]."','".$data["taobaoid"]."','".$data["link"]."','".$data["comment"]."')";			
+						$sql="insert into hanfu(userid,name,addtime,main_pic,type,imgs,taobaoid,link,comment) values ('$userid','".$data["title"]."','$addtime','".$data["main_pic"]."','".$data["type"]."','".$data["imgs"]."','".$data["taobaoid"]."','".$data["link"]."','".$data["comment"]."')";			
 			}else{				
-				$sql="insert into hanfu(userid,name,addtime,admirenum,type,business,structure,other,color,element,sell,comment)
-				values('$userid','".$data['name']."','$addtime',0,'".$data["type"]."','".$data["business"]."','".$data["structure"]."','".$data["other"]."','".$data["color"]."','".$data["element"]."','".$data["sell"]."','".$data["comment"]."')";
+				$sql="insert into hanfu(userid,name,addtime,type,business,structure,other,color,element,sell,comment)
+				values('$userid','".$data['name']."','$addtime','".$data["type"]."','".$data["business"]."','".$data["structure"]."','".$data["other"]."','".$data["color"]."','".$data["element"]."','".$data["sell"]."','".$data["comment"]."')";
 			}
 			SqlHelper::execute_sql($sql);
 			return SqlHelper::getTheLastInsert($addtime,$userid);
@@ -198,6 +198,16 @@
 			SqlHelper::free_result($res);
 			return $return;
 
+		}
+		public static function getUploadHanfus($userid){
+			$sql="SELECT * from hanfu where main_pic is null and userid='$userid'";
+			$res=SqlHelper::execute_sql($sql);
+			$return=array();
+			while($row=mysql_fetch_assoc($res)){
+				array_push($return,$row['id']);
+			}
+			SqlHelper::free_result($res);
+			return $return;
 		}
 		public static function addCollectionList($userid,$title){
 			$sql="insert into collectionlist (title,owner) values ('$title','$userid')";

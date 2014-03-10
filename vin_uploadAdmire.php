@@ -6,6 +6,6 @@ require_once 'Hanfu_SqlHelper.class.php';
 $user=SqlHelper::getUserByName($_SESSION['userName']);
 $itemId=$_GET['itemId'];
 $type=$_GET['type'];
-$num=FileControl::saveAdmire($itemId,$type,$user->getUserId());
+$num=$user->admire($itemId,$type);
 echo $num;
 ?>

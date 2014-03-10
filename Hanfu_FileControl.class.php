@@ -88,7 +88,18 @@
 			}else
 				return array();
 		}
-
+		public static function read_file($type,$id,$item){
+			$fileName=FileControl::$filepath."/$type/$id.$item";
+			if(FileControl::isExists($fileName)){
+				$handle=fopen($fileName,"rb");
+				$str=fread($handle, filesize($fileName));
+				$arr=(array)unserialize($str);
+				fclose($handle);
+				return $arr;
+			}else{
+				return array();
+			}
+		}
 		public static function readHanfuAdmiresById($id){
 			if(FileControl::isExists(FileControl::$filepath."/hanfu/$id/$id.adm")){
 				$handle=fopen(FileControl::$filepath."/hanfu/$id/$id.adm","rb");
@@ -328,6 +339,7 @@
 		}
 		public static function readAllFile($url){
 			$files=array();
+			if(!is_dir($url)) return array();
 			if($handle=opendir($url)){
 				while (false !== ($file =readdir($handle))) {
 					if($file=='.'||$file=="..")
@@ -399,27 +411,16 @@
 				$now=date("Y-m-d H:i:s");
 				return $now;
 		}
-		public static function saveAdmire($itemId,$type,$userid){
+		public static function saveAdmire($itemId,$type,$userid,$idType="userId"){
 			if(!is_dir(FileControl::$filepath."/$type/$itemId/"))
 					mkdir(FileControl::$filepath."/$type/$itemId/",0777);
 				$fileName=FileControl::$filepath."/$type/$itemId/".$itemId.".adm";
 				$arr=FileControl::readFileByName($fileName);
 				$handle=fopen($fileName,"w+b");
-				$data=FileControl::makeStructureOfFile($arr,"userId",$userid);
+				$data=FileControl::makeStructureOfFile($arr,$idType,$userid);
 				fwrite($handle,serialize($data));
 				fclose($handle);
 				return count($data);
-		}
-		public static function read_file($type,$id,$item){
-			$fileName=FileControl::$filepath."/$type/$id/$id.$item";
-			if(FileControl::isExists($fileName)){
-				$handle=fopen($fileName,"rb");
-				$str=fread($handle, filesize($fileName));
-				$arr=(array)unserialize($str);
-				fclose($handle);
-				return $arr;
-			}else
-				return array();
 		}
 		public static function readFileByName($filePath){
 			if(FileControl::isExists($filePath)){

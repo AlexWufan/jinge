@@ -8,8 +8,6 @@
 	$now=date("U");
 	if(!is_dir("./vin/"))
 	        mkdir("./vin/",0777);
-	
-
 	if($_FILES["file"]["size"] < 200000){
 	  if($_FILES["file"]["error"] > 0){
 
